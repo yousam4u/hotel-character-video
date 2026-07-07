@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 캐릭터 홍보영상 제작소 — 학생용</title>
+<style>
+  :root{
+    --navy:#12162A; --navy2:#1B2140; --navy3:#242B52;
+    --indigo:#3B3F91; --violet:#8B6BD4; --pink:#F0577F;
+    --paper:#F8F6FC; --ink:#1B1B2F; --muted:#9AA0C9; --muted2:#6B7280;
+    --line:#2E3560;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--navy); color:#EDEBF7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,sans-serif;
+    min-height:100vh;
+  }
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .wrap{max-width:760px; margin:0 auto; padding:28px 20px 80px;}
+
+  /* ---------- Header / filmstrip ---------- */
+  .header{padding:18px 0 8px;}
+  .kicker{
+    font-size:11px; letter-spacing:3px; color:var(--violet); font-weight:800;
+    text-transform:uppercase; margin:0 0 6px;
+  }
+  .title{
+    font-size:30px; font-weight:900; letter-spacing:-0.5px; margin:0 0 4px;
+    line-height:1.15; background:linear-gradient(90deg,#fff,#C9C2F0);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .subtitle{color:var(--muted); font-size:14px; margin:0 0 22px;}
+
+  .filmstrip{
+    display:flex; gap:6px; padding:10px 12px; background:var(--navy2);
+    border-radius:10px; border:1px solid var(--line); margin-bottom:26px;
+  }
+  .hole{
+    flex:1; height:22px; border-radius:5px; background:#141936;
+    border:1px solid var(--line); position:relative; overflow:hidden;
+    transition:background .4s ease;
+  }
+  .hole.done{background:linear-gradient(135deg,var(--violet),var(--pink));}
+  .hole .num{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:10px; font-weight:800; color:var(--muted);
+  }
+  .hole.done .num{color:#fff;}
+
+  /* ---------- Scene card ---------- */
+  .scene{
+    background:var(--navy2); border:1px solid var(--line); border-radius:16px;
+    padding:30px 26px; display:none; animation:fadeIn .35s ease;
+  }
+  .scene.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .scene-label{
+    font-size:11px; font-weight:800; letter-spacing:2px; color:var(--pink);
+    text-transform:uppercase; margin:0 0 10px;
+  }
+  .scene h2{font-size:22px; margin:0 0 18px; font-weight:800; line-height:1.35;}
+  .scene textarea, .scene input[type=text]{
+    width:100%; background:var(--navy); border:1.5px solid var(--line); border-radius:10px;
+    padding:14px 16px; color:#fff; font-size:15px; font-family:inherit;
+    resize:vertical; min-height:52px;
+  }
+  .scene textarea:focus, .scene input:focus{outline:none; border-color:var(--violet);}
+  .hint{
+    margin-top:10px; font-size:13px; color:var(--muted); background:#1A1F3D;
+    border-left:3px solid var(--violet); padding:9px 12px; border-radius:6px;
+  }
+  .hint b{color:#C9C2F0;}
+
+  .mood-options{display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;}
+  .mood-chip{
+    padding:10px 16px; border-radius:999px; border:1.5px solid var(--line);
+    background:var(--navy); color:var(--muted); font-size:13.5px; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .mood-chip:hover{border-color:var(--violet);}
+  .mood-chip.picked{background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff; border-color:transparent;}
+
+  .nav-row{display:flex; justify-content:space-between; margin-top:24px; gap:10px;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .btn{
+    padding:13px 22px; border-radius:10px; font-size:14.5px; font-weight:700;
+    transition:opacity .15s ease, transform .1s ease;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-ghost{background:transparent; color:var(--muted); border:1.5px solid var(--line);}
+  .btn-ghost:hover{color:#fff; border-color:var(--muted);}
+  .btn-primary{background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;}
+  .btn-primary:disabled{opacity:.35; cursor:not-allowed;}
+  .btn-primary:not(:disabled):hover{opacity:.92;}
+
+  /* ---------- Loading ---------- */
+  .loading{display:none; text-align:center; padding:70px 20px;}
+  .loading.active{display:block;}
+  .reel{
+    width:64px; height:64px; margin:0 auto 22px; border-radius:50%;
+    border:5px solid var(--line); border-top-color:var(--violet);
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading p{color:var(--muted); font-size:14px;}
+
+  /* ---------- Results ---------- */
+  .results{display:none;}
+  .results.active{display:block;}
+  .result-hero{text-align:center; padding:10px 0 30px;}
+  .result-hero h2{font-size:26px; font-weight:900; margin:0 0 8px;}
+  .result-hero p{color:var(--muted); font-size:14px;}
+
+  .card{
+    background:var(--navy2); border:1px solid var(--line); border-radius:14px;
+    margin-bottom:16px; overflow:hidden;
+  }
+  .card-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px; cursor:pointer; user-select:none;
+  }
+  .card-head .tag{
+    font-size:10.5px; font-weight:800; letter-spacing:1.5px; color:var(--violet);
+    text-transform:uppercase; margin-bottom:4px; display:block;
+  }
+  .card-head h3{margin:0; font-size:16.5px; font-weight:800;}
+  .chev{color:var(--muted); font-size:14px; transition:transform .2s ease;}
+  .card.open .chev{transform:rotate(180deg);}
+  .card-body{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    border-top:1px solid var(--line);
+  }
+  .card.open .card-body{max-height:2000px;}
+  .card-inner{padding:18px 20px 20px;}
+  .pbox{
+    background:#0D1024; border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; font-size:13.5px; line-height:1.75; white-space:pre-wrap;
+    color:#E4E2F5; position:relative;
+  }
+  .copybtn{
+    display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+    background:var(--navy3); color:#fff; padding:8px 14px; border-radius:8px;
+    font-size:12.5px; font-weight:700;
+  }
+  .copybtn:hover{background:var(--indigo);}
+  .copybtn.copied{background:#2E7D45;}
+  .lang-tab-row{display:flex; gap:8px; margin-bottom:10px;}
+  .lang-tab{
+    padding:6px 14px; border-radius:8px; font-size:12px; font-weight:700;
+    background:var(--navy); color:var(--muted); border:1px solid var(--line);
+  }
+  .lang-tab.on{background:var(--indigo); color:#fff; border-color:transparent;}
+
+  .link-strip{
+    display:flex; gap:10px; flex-wrap:wrap; margin:26px 0 6px;
+  }
+  .link-chip{
+    flex:1; min-width:140px; text-align:center; padding:14px 10px; border-radius:12px;
+    background:var(--navy2); border:1px solid var(--line); color:#fff; text-decoration:none;
+    font-size:12.5px; font-weight:700;
+  }
+  .link-chip:hover{border-color:var(--violet);}
+  .link-chip .lname{display:block; font-size:14px; margin-bottom:2px;}
+  .link-chip .lurl{color:var(--muted); font-size:10.5px;}
+
+  .restart{
+    display:block; margin:26px auto 0; background:transparent; color:var(--muted);
+    text-decoration:underline; font-size:13px;
+  }
+  .errbox{
+    display:none; background:#3A1B28; border:1px solid #7A3550; color:#F5B8C9;
+    padding:14px 16px; border-radius:10px; font-size:13px; margin-top:14px;
+  }
+  .errbox.show{display:block;}
+  @media(max-width:520px){ .title{font-size:24px;} .scene{padding:22px 18px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <p class="kicker">AI 캐릭터 홍보영상 제작소 · 학생용</p>
+    <h1 class="title">우리 브랜드의 AI 캐릭터를<br>인터뷰로 완성해요</h1>
+    <p class="subtitle">질문 6개만 답하면 기획안 · 캐릭터 시트 · 대본 · 프롬프트(한글·영어)까지 자동으로 만들어드려요.</p>
+    <a href="prompt.html" style="display:inline-block; margin-top:10px; font-size:12.5px; color:var(--violet); text-decoration:underline;">✍️ 직접 프롬프트를 복사해서 쓰고 싶다면 → 상세 프롬프트 가이드 페이지</a>
+  </div>
+
+  <div class="filmstrip" id="filmstrip"></div>
+
+  <!-- Scenes (questions) -->
+  <form id="sceneForm">
+    <div class="scene active" data-step="0">
+      <p class="scene-label">Scene 1 · 기획</p>
+      <h2>홍보할 브랜드/장소 이름은 무엇인가요?</h2>
+      <input type="text" id="q_brand" placeholder="예: 오션라이트 호텔" autocomplete="off">
+      <div class="hint"><b>예시</b> 오션라이트 호텔 · 초록숲 캠핑장 · 별빛분식</div>
+    </div>
+
+    <div class="scene" data-step="1">
+      <p class="scene-label">Scene 2 · 기획</p>
+      <h2>어떤 컨셉과 분위기인가요?</h2>
+      <input type="text" id="q_concept" placeholder="예: 바다 전망 힐링 호텔" autocomplete="off">
+      <div class="hint"><b>예시</b> 바다 전망 힐링 호텔 · 반려동물과 함께하는 캠핑장</div>
+    </div>
+
+    <div class="scene" data-step="2">
+      <p class="scene-label">Scene 3 · 캐릭터 설계</p>
+      <h2>주인공 캐릭터를 소개해주세요</h2>
+      <input type="text" id="q_char1" placeholder="예: 라미, 체크인 안내 직원, 검은 단발머리">
+      <div class="hint"><b>이름, 역할, 외모 힌트</b> 순서로 적어주세요. 예: 라미, 체크인 안내 직원, 검은 단발머리</div>
+    </div>
+
+    <div class="scene" data-step="3">
+      <p class="scene-label">Scene 4 · 캐릭터 설계</p>
+      <h2>대화 상대 캐릭터를 소개해주세요</h2>
+      <input type="text" id="q_char2" placeholder="예: 소이, 여행 온 손님, 긴 갈색 머리">
+      <div class="hint"><b>이름, 역할, 외모 힌트</b> 순서로 적어주세요. 예: 소이, 여행 온 손님, 긴 갈색 머리</div>
+    </div>
+
+    <div class="scene" data-step="4">
+      <p class="scene-label">Scene 5 · 기획</p>
+      <h2>강조하고 싶은 서비스나 특징은?</h2>
+      <input type="text" id="q_service" placeholder="예: 오션뷰 객실, 조식 뷔페, 관광지 추천">
+      <div class="hint"><b>2~3가지</b>를 쉼표로 구분해 적어주세요.</div>
+    </div>
+
+    <div class="scene" data-step="5">
+      <p class="scene-label">Scene 6 · 기획</p>
+      <h2>영상 분위기를 골라주세요</h2>
+      <div class="mood-options" id="moodOptions">
+        <div class="mood-chip" data-mood="밝고 활기참">밝고 활기참</div>
+        <div class="mood-chip" data-mood="차분하고 고급스러움">차분하고 고급스러움</div>
+        <div class="mood-chip" data-mood="친근하고 편안함">친근하고 편안함</div>
+      </div>
+      <input type="hidden" id="q_mood">
+      <div class="hint">캐릭터의 표정과 말투, 영상의 색감까지 이 분위기에 맞춰 만들어져요.</div>
+    </div>
+  </form>
+
+  <div class="nav-row" id="navRow">
+    <button class="btn btn-ghost" id="prevBtn" type="button">이전</button>
+    <button class="btn btn-primary" id="nextBtn" type="button">다음</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loadingView">
+    <div class="reel"></div>
+    <p id="loadingText">캐릭터 시트를 만들고 있어요...</p>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="resultsView">
+    <div class="result-hero">
+      <h2>🎬 촬영 준비 완료!</h2>
+      <p>아래 결과를 순서대로 복사해서 각 도구에 붙여넣으세요.</p>
+    </div>
+    <div id="resultCards"></div>
+
+    <div class="link-strip">
+      <a class="link-chip" href="https://gemini.google.com" target="_blank"><span class="lname">🎨 캐릭터 이미지</span><span class="lurl">gemini.google.com</span></a>
+      <a class="link-chip" href="https://www.canva.com" target="_blank"><span class="lname">🎨 캔바</span><span class="lurl">canva.com</span></a>
+      <a class="link-chip" href="https://www.heygen.com" target="_blank"><span class="lname">🗣 HeyGen</span><span class="lurl">heygen.com</span></a>
+      <a class="link-chip" href="https://labs.google/flow" target="_blank"><span class="lname">🎞 Google Flow</span><span class="lurl">labs.google/flow</span></a>
+    </div>
+
+    <button class="restart" id="restartBtn">처음부터 다시 만들기</button>
+  </div>
+
+  <div class="errbox" id="errBox"></div>
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+let step = 0;
+const answers = { brand:'', concept:'', char1:'', char2:'', service:'', mood:'' };
+
+// build filmstrip holes
+const filmstrip = document.getElementById('filmstrip');
+for(let i=0;i<TOTAL_STEPS;i++){
+  const h = document.createElement('div');
+  h.className = 'hole';
+  h.innerHTML = '<span class="num">'+(i+1)+'</span>';
+  filmstrip.appendChild(h);
+}
+function renderFilmstrip(){
+  [...filmstrip.children].forEach((h,i)=> h.classList.toggle('done', i < step || (i===step && currentValue())));
+}
+
+function currentValue(){
+  const map = ['q_brand','q_concept','q_char1','q_char2','q_service','q_mood'];
+  const el = document.getElementById(map[step]);
+  return el && el.value.trim().length>0;
+}
+
+const scenes = [...document.querySelectorAll('.scene')];
+function showStep(i){
+  scenes.forEach(s=> s.classList.toggle('active', +s.dataset.step === i));
+  document.getElementById('prevBtn').style.visibility = i===0 ? 'hidden':'visible';
+  document.getElementById('nextBtn').textContent = i===TOTAL_STEPS-1 ? '결과 만들기 🎬' : '다음';
+  renderFilmstrip();
+}
+showStep(0);
+
+// mood chips
+document.querySelectorAll('.mood-chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.mood-chip').forEach(c=>c.classList.remove('picked'));
+    chip.classList.add('picked');
+    document.getElementById('q_mood').value = chip.dataset.mood;
+    renderFilmstrip();
+  });
+});
+['q_brand','q_concept','q_char1','q_char2','q_service'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderFilmstrip);
+});
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  if(step>0){ step--; showStep(step); }
+});
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(!currentValue()){
+    showErr('이 질문에 먼저 답해주세요!');
+    return;
+  }
+  hideErr();
+  if(step < TOTAL_STEPS-1){ step++; showStep(step); }
+  else { collectAnswers(); generate(); }
+});
+
+function showErr(msg){
+  const e = document.getElementById('errBox');
+  e.textContent = '⚠ ' + msg;
+  e.classList.add('show');
+}
+function hideErr(){ document.getElementById('errBox').classList.remove('show'); }
+
+function collectAnswers(){
+  answers.brand = document.getElementById('q_brand').value.trim();
+  answers.concept = document.getElementById('q_concept').value.trim();
+  answers.char1 = document.getElementById('q_char1').value.trim();
+  answers.char2 = document.getElementById('q_char2').value.trim();
+  answers.service = document.getElementById('q_service').value.trim();
+  answers.mood = document.getElementById('q_mood').value.trim();
+}
+
+async function callClaude(prompt){
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }],
+    })
+  });
+  if(!response.ok) throw new Error('API ' + response.status);
+  const data = await response.json();
+  const text = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+  if(!text.trim()) throw new Error('빈 응답');
+  return text;
+}
+
+/* ---------- 오프라인(템플릿) 생성 — AI 서버 연결이 안 될 때 자동 사용 ---------- */
+function parseCharacter(raw){
+  const parts = raw.split(/[,，]/).map(t=>t.trim()).filter(Boolean);
+  return {
+    name: parts[0] || raw,
+    role: parts[1] || '직원',
+    look: parts.slice(2).join(', ') || '단정한 검은 머리'
+  };
+}
+const MOOD_MAP = {
+  '밝고 활기참':        { expr:'밝고 활기찬 미소', style:'햇살, 활기, 리듬감', en:'bright and cheerful mood, sunny lighting' },
+  '차분하고 고급스러움': { expr:'은은하고 우아한 미소', style:'품격, 차분함, 고급스러움', en:'calm, elegant and luxurious mood, soft warm lighting' },
+  '친근하고 편안함':    { expr:'따뜻하고 편안한 미소', style:'따뜻함, 편안함, 친근함', en:'warm, friendly and cozy mood, soft natural lighting' }
+};
+function makeLocalResults(){
+  const m = MOOD_MAP[answers.mood] || MOOD_MAP['친근하고 편안함'];
+  const c1 = parseCharacter(answers.char1);
+  const c2 = parseCharacter(answers.char2);
+  const services = answers.service.split(/[,，]/).map(t=>t.trim()).filter(Boolean);
+  const sv1 = services[0] || answers.service;
+  const svAll = services.join(', ');
+
+  const c1Sheet = `20대 초반 한국인 ${c1.role} '${c1.name}'. ${c1.look}. 단정하고 깔끔한 유니폼 차림에 이름표를 달고 있다. 항상 ${m.expr}를 짓고 있으며, ${answers.brand}를 대표하는 얼굴이다.`;
+  const c2Sheet = `20대 중반 한국인 ${c2.role} '${c2.name}'. ${c2.look}. 편안한 캐주얼 차림. 호기심 많고 즐거운 표정으로 ${answers.brand}를 처음 방문했다.`;
+
+  const plan = `[기획안]
+- 브랜드 한줄 요약: ${answers.concept}을(를) 담은 ${answers.brand}
+- 타겟 고객: ${answers.concept}에 끌리는 10~30대 방문객
+- 핵심 메시지: "${answers.brand}에서만 느낄 수 있는 ${answers.concept}"
+- 영상 스타일 키워드: ${m.style}
+- 추천 영상 구성: 단독형은 ${c1.name}의 인사로 시작해 ${sv1} 소개를 거쳐 초대 인사로 마무리합니다. 대화형은 ${c2.name}이(가) 방문해 감탄하고 ${c1.name}이(가) 안내하는 흐름으로 구성합니다.`;
+
+  const a = `[캐릭터1 시트]
+${c1Sheet}
+
+[캐릭터2 시트]
+${c2Sheet}
+
+[캐릭터1 생성 프롬프트-한글]
+${c1Sheet} 전신이 보이는 정면 자세, 배경은 밝은 단색, 실사에 가까운 깔끔한 인물 사진 스타일.
+
+[캐릭터1 생성 프롬프트-영어]
+Full body portrait of a Korean ${c1.role === '직원' ? 'staff member' : 'character'} in their early 20s named ${c1.name}, appearance: ${c1.look} (in Korean description), neat uniform with a name tag, ${m.en}, full figure, clear silhouette, plain light background, clean realistic photo style, facing camera.
+
+[캐릭터2 생성 프롬프트-한글]
+${c2Sheet} 전신이 보이는 정면 자세, 배경은 밝은 단색, 실사에 가까운 깔끔한 인물 사진 스타일.
+
+[캐릭터2 생성 프롬프트-영어]
+Full body portrait of a Korean visitor in their mid 20s named ${c2.name}, appearance: ${c2.look} (in Korean description), casual comfortable outfit, curious happy expression, ${m.en}, full figure, clear silhouette, plain light background, clean realistic photo style, facing camera.
+
+[HeyGen 스크립트]
+▶ 장면1(인사): [${answers.brand} 입구, ${c1.name}이(가) 카메라를 보고 손을 흔든다] / [안녕하세요! ${answers.brand}의 ${c1.name}예요.]
+▶ 장면2(소개): [${sv1} 앞에서 ${c1.name}이(가) 소개하는 장면] / [${svAll}, 다 준비되어 있어요!]
+▶ 장면3(마무리): [${answers.brand} 전경, ${c1.name}이(가) 환하게 웃는다] / [${answers.brand}에서 여러분을 기다릴게요!]`;
+
+  const flowScene = (num, title, desc, line1, line2) => `A scene at ${answers.brand}. Character 1: a Korean staff member in their early 20s named ${c1.name}, ${c1.look} (Korean description), neat uniform. Character 2: a Korean visitor in their mid 20s named ${c2.name}, ${c2.look} (Korean description), casual outfit. ${desc} Character 1 says "${line1}", Character 2 replies "${line2}". ${m.en}, 16:9 aspect ratio, 8 seconds.`;
+
+  const b = `[대화 대본-한글]
+▶ 장면1(만남): [입구에서 ${c2.name}이(가) 들어오고 ${c1.name}이(가) 맞이한다] / 캐릭터1: 어서 오세요, ${answers.brand}입니다! / 캐릭터2: 와, 정말 기대돼요!
+▶ 장면2(소개와 호응): [${sv1} 앞에서 안내하는 장면] / 캐릭터1: ${sv1}, 정말 자신 있어요. / 캐릭터2: 우와, 진짜 좋은데요?
+▶ 장면3(마무리): [두 사람이 나란히 카메라를 본다] / 캐릭터1: ${answers.brand}에서 만나요! / 캐릭터2: 저도 또 올 거예요!
+
+[Flow 프롬프트-장면1-영어]
+${flowScene(1,'만남','At the entrance, Character 2 arrives and Character 1 welcomes her warmly.', `어서 오세요, ${answers.brand}입니다!`, '와, 정말 기대돼요!')}
+
+[Flow 프롬프트-장면2-영어]
+${flowScene(2,'소개','Character 1 proudly introduces the main service while Character 2 looks amazed.', `${sv1}, 정말 자신 있어요.`, '우와, 진짜 좋은데요?')}
+
+[Flow 프롬프트-장면3-영어]
+${flowScene(3,'마무리','The two characters stand side by side, smiling at the camera and waving.', `${answers.brand}에서 만나요!`, '저도 또 올 거예요!')}`;
+
+  return { plan, a, b };
+}
+
+async function generate(){
+  document.getElementById('sceneForm').style.display='none';
+  document.getElementById('navRow').style.display='none';
+  document.getElementById('loadingView').classList.add('active');
+  hideErr();
+
+  const loadingText = document.getElementById('loadingText');
+  const msgs = ['기획안을 정리하는 중...','캐릭터 시트를 만들고 있어요...','캐릭터 생성 프롬프트를 쓰는 중...','HeyGen 대본을 정리하는 중...'];
+  let mi=0; const ticker=setInterval(()=>{ loadingText.textContent = msgs[mi%msgs.length]; mi++; }, 1800);
+
+  let usedLocal = false;
+  try{
+    const promptPlan = `당신은 홍보영상 전문 기획자입니다. 아래 정보를 바탕으로 기획안을 만드세요. 다른 설명 없이 아래 형식 그대로만 출력하세요. 모든 텍스트는 간결하게 작성하세요.
+
+[정보]
+브랜드/장소: ${answers.brand}
+컨셉/분위기: ${answers.concept}
+강조 서비스: ${answers.service}
+영상 분위기: ${answers.mood}
+
+[출력 형식 — 정확히 이대로]
+[기획안]
+- 브랜드 한줄 요약: (이 브랜드가 어떤 곳인지 1문장)
+- 타겟 고객: (누구에게 보여줄 영상인지 1문장)
+- 핵심 메시지: (영상이 전달해야 할 단 하나의 메시지, 1문장)
+- 영상 스타일 키워드: (분위기를 나타내는 키워드 3개, 쉼표로 구분)
+- 추천 영상 구성: (단독형 3장면 + 대화형 3장면을 어떤 흐름으로 짤지 2문장)`;
+
+    const resultPlan = await callClaude(promptPlan);
+
+    const promptA = `당신은 AI 캐릭터 홍보영상 제작 코치입니다. 아래 정보를 바탕으로 결과를 만드세요. 다른 설명 없이 아래 형식 그대로만 출력하세요. 모든 텍스트는 간결하게 작성하세요.
+
+[정보]
+브랜드/장소: ${answers.brand}
+컨셉/분위기: ${answers.concept}
+캐릭터1(주인공): ${answers.char1}
+캐릭터2(상대역): ${answers.char2}
+강조 서비스: ${answers.service}
+영상 분위기: ${answers.mood}
+
+[출력 형식 — 정확히 이대로]
+[캐릭터1 시트]
+(4~5줄 한국어 문단: 나이대,성별,헤어스타일(길이·색),얼굴특징,복장(색상까지),대표 표정을 반드시 포함)
+
+[캐릭터2 시트]
+(위와 동일 형식)
+
+[캐릭터1 생성 프롬프트-한글]
+(이미지 생성용 한글 설명 2문장, 전신이 보이도록)
+
+[캐릭터1 생성 프롬프트-영어]
+(위를 영어로, full body, full figure, clear silhouette 포함, 이미지 생성 AI에 바로 쓸 프롬프트)
+
+[캐릭터2 생성 프롬프트-한글]
+[캐릭터2 생성 프롬프트-영어]
+
+[HeyGen 스크립트]
+▶ 장면1(인사): [장면 설명] / [대사 — 캐릭터1이 카메라를 보고 인사+자기소개, 10초 이내]
+▶ 장면2(소개): [장면 설명] / [대사 — 강조 서비스 소개, 10초 이내]
+▶ 장면3(마무리): [장면 설명] / [대사 — 초대 문장, 10초 이내]`;
+
+    const resultA = await callClaude(promptA);
+    const char1Sheet = extractBlock(resultA, '캐릭터1 시트');
+    const char2Sheet = extractBlock(resultA, '캐릭터2 시트');
+
+    const promptB = `당신은 AI 캐릭터 홍보영상 제작 코치입니다. 아래 캐릭터 시트를 바탕으로 Google Flow용 대화 영상 자료를 만드세요. 다른 설명 없이 아래 형식 그대로만 출력하세요. 모든 텍스트는 간결하게 작성하세요.
+
+[캐릭터1 시트]: ${char1Sheet}
+[캐릭터2 시트]: ${char2Sheet}
+브랜드: ${answers.brand} / 분위기: ${answers.mood}
+
+[출력 형식 — 정확히 이대로]
+[대화 대본-한글]
+▶ 장면1(만남): [장면 설명] / 캐릭터1: (대사) / 캐릭터2: (대사)
+▶ 장면2(소개와 호응): [장면 설명] / 캐릭터1: (대사) / 캐릭터2: (대사)
+▶ 장면3(마무리): [장면 설명] / 캐릭터1: (대사) / 캐릭터2: (대사)
+
+[Flow 프롬프트-장면1-영어]
+(캐릭터1·2 시트를 영어로 반영 + 장면 설명 + "Character1 says '...', Character2 replies '...'" 구조 + 16:9, 8 seconds, 분위기 포함한 완성형 영어 프롬프트, 한 문단)
+
+[Flow 프롬프트-장면2-영어]
+(위와 동일 구조로 장면2 내용)
+
+[Flow 프롬프트-장면3-영어]
+(위와 동일 구조로 장면3 내용)`;
+
+    const resultB = await callClaude(promptB);
+
+    clearInterval(ticker);
+    renderResults(resultPlan, resultA, resultB);
+  }catch(err){
+    // AI 서버 연결 실패 시(예: 배포된 웹사이트에서 직접 접속) 템플릿 기반으로 자동 생성
+    try{
+      const local = makeLocalResults();
+      usedLocal = true;
+      clearInterval(ticker);
+      renderResults(local.plan, local.a, local.b);
+      showErr('AI 서버에 연결할 수 없어 기본 템플릿으로 초안을 만들었어요. 각 카드의 내용을 Claude나 Gemini에 붙여넣어 더 다듬어도 좋아요!');
+    }catch(err2){
+      clearInterval(ticker);
+      document.getElementById('loadingView').classList.remove('active');
+      document.getElementById('sceneForm').style.display='block';
+      document.getElementById('navRow').style.display='flex';
+      showErr('생성 중 문제가 발생했어요. 잠시 후 다시 시도해주세요. (' + err.message + ')');
+    }
+  }
+}
+
+function extractBlock(text, label){
+  const re = new RegExp('\\[' + label + '\\]([\\s\\S]*?)(?=\\n\\[|$)');
+  const m = text.match(re);
+  return m ? m[1].trim() : '';
+}
+
+function renderResults(resultPlan, resultA, resultB){
+  document.getElementById('loadingView').classList.remove('active');
+  document.getElementById('resultsView').classList.add('active');
+
+  const cards = [
+    { tag:'STEP 0 · 기획', title:'홍보영상 기획안', body: extractBlock(resultPlan,'기획안'), note:'대본과 캐릭터를 만들기 전, 이 기획안이 방향을 잡아줍니다. 팀원과 함께 한 번 읽고 다음 단계로 넘어가세요.' },
+    { tag:'STEP 1 · 캐릭터 설계', title:'캐릭터1 고정 시트', body: extractBlock(resultA,'캐릭터1 시트'), note:'이 시트는 앞으로 모든 프롬프트에 그대로 복사됩니다. 절대 수정하지 마세요!' },
+    { tag:'STEP 1 · 캐릭터 설계', title:'캐릭터2 고정 시트', body: extractBlock(resultA,'캐릭터2 시트') },
+    { tag:'STEP 2 · 캔바/제미나이', title:'캐릭터1 생성 프롬프트', bilingual:{
+        kr: extractBlock(resultA,'캐릭터1 생성 프롬프트-한글'), en: extractBlock(resultA,'캐릭터1 생성 프롬프트-영어') } },
+    { tag:'STEP 2 · 캔바/제미나이', title:'캐릭터2 생성 프롬프트', bilingual:{
+        kr: extractBlock(resultA,'캐릭터2 생성 프롬프트-한글'), en: extractBlock(resultA,'캐릭터2 생성 프롬프트-영어') } },
+    { tag:'STEP 3 · HeyGen', title:'단독 홍보영상 스크립트 (3장면)', body: extractBlock(resultA,'HeyGen 스크립트'), note:'HeyGen → Avatars → Photo Avatar 업로드 → Create video → Script 창에 통째로 붙여넣으세요. 자막(Captions)은 꼭 켜세요.' },
+    { tag:'STEP 4 · Google Flow', title:'대화형 대본 (한글, 3장면)', body: extractBlock(resultB,'대화 대본-한글') },
+    { tag:'STEP 4 · Google Flow', title:'장면 1 프롬프트 (영어)', body: extractBlock(resultB,'Flow 프롬프트-장면1-영어'), note:'Flow → 새 프로젝트 → "재료로 동영상 만들기" 모드 → 캐릭터 기준 이미지 2장 등록 후 이 프롬프트로 생성.' },
+    { tag:'STEP 4 · Google Flow', title:'장면 2 프롬프트 (영어)', body: extractBlock(resultB,'Flow 프롬프트-장면2-영어') },
+    { tag:'STEP 4 · Google Flow', title:'장면 3 프롬프트 (영어)', body: extractBlock(resultB,'Flow 프롬프트-장면3-영어') },
+  ];
+
+  const container = document.getElementById('resultCards');
+  container.innerHTML = '';
+  cards.forEach((c, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'card' + (idx===0 ? ' open':'');
+    const bodyId = 'cardbody_'+idx;
+    let innerHtml = '';
+    if(c.bilingual){
+      innerHtml = `
+        <div class="lang-tab-row">
+          <div class="lang-tab on" data-lang="kr" data-idx="${idx}">한글</div>
+          <div class="lang-tab" data-lang="en" data-idx="${idx}">English</div>
+        </div>
+        <div class="pbox" id="pbox_${idx}">${escapeHtml(c.bilingual.kr)}</div>
+        <button class="copybtn" data-copy="${idx}" type="button">📋 복사하기</button>`;
+    } else {
+      innerHtml = `<div class="pbox">${escapeHtml(c.body)}</div>
+        <button class="copybtn" data-copy="${idx}" type="button">📋 복사하기</button>`;
+    }
+    if(c.note){ innerHtml += `<div class="hint" style="margin-top:12px;">${escapeHtml(c.note)}</div>`; }
+
+    card.innerHTML = `
+      <div class="card-head" data-toggle="${idx}">
+        <div><span class="tag">${c.tag}</span><h3>${c.title}</h3></div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="card-body" id="${bodyId}"><div class="card-inner">${innerHtml}</div></div>
+    `;
+    container.appendChild(card);
+    card._data = c;
+  });
+
+  container.querySelectorAll('.card-head').forEach(h=>{
+    h.addEventListener('click', ()=> h.closest('.card').classList.toggle('open'));
+  });
+  container.querySelectorAll('.lang-tab').forEach(tab=>{
+    tab.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const idx = tab.dataset.idx;
+      const lang = tab.dataset.lang;
+      const card = cards[idx];
+      container.querySelectorAll(`.lang-tab[data-idx="${idx}"]`).forEach(t=>t.classList.remove('on'));
+      tab.classList.add('on');
+      document.getElementById('pbox_'+idx).textContent = lang==='kr' ? card.bilingual.kr : card.bilingual.en;
+    });
+  });
+  container.querySelectorAll('.copybtn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const idx = btn.dataset.copy;
+      const card = cards[idx];
+      let text = card.bilingual ? document.getElementById('pbox_'+idx).textContent : card.body;
+      navigator.clipboard.writeText(text).then(()=>{
+        btn.textContent = '✅ 복사됨!';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='📋 복사하기'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+  });
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  location.reload();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 캐릭터 홍보영상 제작소 — 상세 프롬프트 가이드</title>
+<style>
+  :root{
+    --navy:#12162A; --navy2:#1B2140; --navy3:#242B52;
+    --indigo:#3B3F91; --violet:#8B6BD4; --pink:#F0577F;
+    --muted:#9AA0C9; --line:#2E3560;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--navy); color:#EDEBF7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,sans-serif;
+  }
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .wrap{max-width:760px; margin:0 auto; padding:28px 20px 80px;}
+
+  .backlink{color:var(--muted); font-size:12.5px; text-decoration:none;}
+  .backlink:hover{color:#fff;}
+  .kicker{font-size:11px; letter-spacing:3px; color:var(--violet); font-weight:800; text-transform:uppercase; margin:18px 0 6px;}
+  .title{font-size:28px; font-weight:900; letter-spacing:-0.5px; margin:0 0 6px;}
+  .subtitle{color:var(--muted); font-size:14px; margin:0 0 20px;}
+
+  .stepbar{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:26px;}
+  .stepbar a{
+    flex:1; min-width:110px; text-align:center; padding:10px 8px; border-radius:10px;
+    background:var(--navy2); border:1px solid var(--line); color:var(--muted); font-size:12px;
+    font-weight:700; text-decoration:none;
+  }
+  .stepbar a:hover{border-color:var(--violet); color:#fff;}
+
+  .stepblock{
+    background:var(--navy2); border:1px solid var(--line); border-radius:16px;
+    padding:26px 24px; margin-bottom:22px; scroll-margin-top:20px;
+  }
+  .stepblock h2{font-size:20px; font-weight:800; margin:0 0 6px;}
+  .steptag{font-size:11px; font-weight:800; letter-spacing:1.5px; color:var(--pink); text-transform:uppercase;}
+  .desc{color:var(--muted); font-size:13.5px; line-height:1.7; margin:8px 0 16px;}
+
+  .fieldbox{
+    background:#2A1622; border:1.5px solid var(--pink); border-radius:10px;
+    padding:14px 16px; margin-bottom:14px; font-size:13px; line-height:1.9;
+  }
+  .fieldbox b{color:#FFAFC6; display:block; margin-bottom:6px; font-size:12px;}
+
+  .pbox{
+    background:#0D1024; border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; font-size:13.5px; line-height:1.8; white-space:pre-wrap;
+    color:#E4E2F5; margin-bottom:10px;
+  }
+  .copybtn{
+    background:var(--navy3); color:#fff; padding:8px 14px; border-radius:8px;
+    font-size:12.5px; font-weight:700; border:none; cursor:pointer;
+  }
+  .copybtn:hover{background:var(--indigo);}
+  .copybtn.copied{background:#2E7D45;}
+
+  .example{
+    background:#132A1D; border:1px solid #3B5D48; border-radius:10px;
+    padding:14px 16px; margin-top:14px; font-size:13px; color:#BEEBCB; line-height:1.75;
+    white-space:pre-wrap;
+  }
+  .example b{color:#8CE0A8; display:block; margin-bottom:6px; font-size:12px;}
+
+  .toollinks{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .toollinks a{
+    padding:8px 14px; border-radius:8px; background:var(--navy3); color:#fff;
+    font-size:12px; text-decoration:none; font-weight:700;
+  }
+  .toollinks a:hover{background:var(--indigo);}
+  @media(max-width:520px){ .title{font-size:22px;} .stepblock{padding:20px 16px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← 인터뷰형 자동 생성 도구로 돌아가기</a>
+  <p class="kicker">AI 캐릭터 홍보영상 제작소 · 상세 프롬프트 가이드</p>
+  <h1 class="title">기획부터 영상 프롬프트까지, 복사해서 바로 쓰기</h1>
+  <p class="subtitle">🔴 빨간 박스만 우리 팀 내용으로 바꾸고, 나머지는 그대로 복사해서 Claude·Gemini에 붙여넣으세요.</p>
+
+  <div class="stepbar">
+    <a href="#s0">STEP 0 · 기획</a>
+    <a href="#s1">STEP 1 · 캐릭터 설계</a>
+    <a href="#s2">STEP 2 · 캐릭터 이미지</a>
+    <a href="#s3">STEP 3 · HeyGen 대본</a>
+    <a href="#s4">STEP 4 · Flow 프롬프트</a>
+  </div>
+
+  <!-- STEP 0 -->
+  <div class="stepblock" id="s0">
+    <p class="steptag">Step 0</p>
+    <h2>홍보영상 기획안 만들기</h2>
+    <p class="desc">대본과 캐릭터를 만들기 전, 방향부터 정합니다. Claude나 Gemini에 아래를 붙여넣으세요.</p>
+
+    <div class="fieldbox">
+      <b>🔴 사용자 입력 (바꿔서 사용)</b>
+      - 브랜드/장소명: &lt;예: 오션라이트 호텔&gt;<br>
+      - 컨셉/분위기: &lt;예: 바다 전망 힐링 호텔&gt;<br>
+      - 강조 서비스: &lt;예: 오션뷰 객실, 조식 뷔페, 관광지 추천&gt;<br>
+      - 영상 분위기: &lt;예: 밝고 활기참 / 차분하고 고급스러움 / 친근하고 편안함&gt;
+    </div>
+
+    <div class="pbox" id="p0">너는 홍보영상 전문 기획자야. 아래 정보로 기획안을 만들어줘.
+
+[브랜드/장소명], [컨셉/분위기], [강조 서비스], [영상 분위기]
+
+다음 항목을 정확히 이 형식으로 출력해줘.
+
+[기획안]
+- 브랜드 한줄 요약: (이 브랜드가 어떤 곳인지 1문장)
+- 타겟 고객: (누구에게 보여줄 영상인지 1문장)
+- 핵심 메시지: (영상이 전달해야 할 단 하나의 메시지, 1문장)
+- 영상 스타일 키워드: (분위기를 나타내는 키워드 3개)
+- 추천 영상 구성: (단독형 3장면 + 대화형 3장면을 어떤 흐름으로 짤지 2문장)</div>
+    <button class="copybtn" data-copy="p0">📋 복사하기</button>
+
+    <div class="example">
+      <b>🟢 완성 예시 — 오션라이트 호텔</b>
+      - 브랜드 한줄 요약: 바다 전망 객실과 조식으로 힐링을 선사하는 호텔
+      - 타겟 고객: 짧은 여행에서 확실한 휴식을 원하는 20~30대
+      - 핵심 메시지: "바다를 보며 아무것도 안 해도 괜찮은 시간"
+      - 영상 스타일 키워드: 잔잔함, 햇살, 여유
+      - 추천 영상 구성: 단독형은 체크인 안내부터 시작해 객실 뷰로 마무리, 대화형은 손님이 로비에서 감탄하며 시작
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="stepblock" id="s1">
+    <p class="steptag">Step 1</p>
+    <h2>캐릭터 고정 시트 만들기</h2>
+    <p class="desc">캐릭터의 외모를 문단으로 '고정'합니다. 이 시트는 이후 모든 프롬프트에 그대로 복사해서 씁니다 — 절대 요약하거나 수정하지 마세요.</p>
+
+    <div class="fieldbox">
+      <b>🔴 사용자 입력</b>
+      - 캐릭터1(주인공): &lt;이름, 역할, 외모 힌트 — 예: 라미, 체크인 안내 직원, 검은 단발머리&gt;<br>
+      - 캐릭터2(상대역): &lt;이름, 역할, 외모 힌트 — 예: 소이, 여행 온 손님, 긴 갈색 머리&gt;
+    </div>
+
+    <div class="pbox" id="p1">너는 캐릭터 디자인 전문가야. 아래 두 캐릭터의 고정 시트를 만들어줘.
+
+캐릭터1(주인공): [이름, 역할, 외모 힌트]
+캐릭터2(상대역): [이름, 역할, 외모 힌트]
+
+각 캐릭터마다 4~5줄 문단으로 작성하고, 반드시 아래 항목을 모두 포함해줘:
+나이대, 성별, 헤어스타일(길이·색), 얼굴 특징, 복장(색상까지), 대표 표정.
+
+이 문단은 앞으로 모든 이미지·영상 프롬프트에 그대로 복사해서 쓸 거야.
+한 번 정하면 절대 바뀌지 않도록 구체적인 단어로 써줘.
+
+[캐릭터1 고정 시트]
+(내용)
+
+[캐릭터2 고정 시트]
+(내용)</div>
+    <button class="copybtn" data-copy="p1">📋 복사하기</button>
+
+    <div class="example">
+      <b>🟢 완성 예시</b>
+      [캐릭터1 고정 시트 — 라미]
+      20대 초반 한국인 여성 호텔리어 '라미'. 어깨까지 오는 검은 단발머리, 둥근 얼굴형에
+      밝은 미소. 네이비색 호텔 유니폼 재킷에 흰 블라우스, 왼쪽 가슴에 금색 이름표.
+      항상 친절하고 활기찬 표정.
+
+      [캐릭터2 고정 시트 — 소이]
+      20대 중반 한국인 여성 여행객 '소이'. 긴 갈색 웨이브 머리, 베이지색 트렌치코트에
+      작은 백팩. 호기심 많고 즐거운 표정.
+    </div>
+    <div class="pbox" style="margin-top:14px; background:#241832; border-color:var(--violet);">⭐ 저장 팁: 완성된 두 시트를 메모장이나 구글 문서에 따로 저장해두세요. STEP 2와 이후 모든 작업에서 계속 복사해서 씁니다.</div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="stepblock" id="s2">
+    <p class="steptag">Step 2</p>
+    <h2>캐릭터 생성 프롬프트 (한글 · 영어)</h2>
+    <p class="desc">STEP 1의 고정 시트를 그대로 붙여넣어 이미지 생성용 프롬프트를 만듭니다. 이미지 생성 AI는 영어 프롬프트가 더 정확하게 작동하는 경우가 많아 두 버전을 모두 준비합니다.</p>
+
+    <div class="fieldbox">
+      <b>🔴 사용자 입력</b>
+      - STEP 1에서 만든 [캐릭터1 고정 시트] / [캐릭터2 고정 시트]를 그대로 붙여넣기
+    </div>
+
+    <div class="pbox" id="p2">아래 캐릭터 고정 시트를 바탕으로 이미지 생성 프롬프트를 만들어줘.
+
+[캐릭터1 고정 시트 붙여넣기]
+[캐릭터2 고정 시트 붙여넣기]
+
+각 캐릭터마다 정면 상반신 사진 프롬프트를 한글과 영어 두 가지로 만들어줘.
+전신이 아닌 상반신 기준, 배경은 밝은 단색, 실사에 가까운 깔끔한 인물 사진 스타일로.
+
+[캐릭터1 생성 프롬프트-한글]
+(2문장)
+
+[캐릭터1 생성 프롬프트-영어]
+(영어로, full body 대신 upper body, clear face, plain background 포함)
+
+[캐릭터2 생성 프롬프트-한글]
+[캐릭터2 생성 프롬프트-영어]</div>
+    <button class="copybtn" data-copy="p2">📋 복사하기</button>
+
+    <div class="example">
+      <b>🟢 완성 예시 — 캐릭터1 (라미)</b>
+      한글: 20대 초반 한국인 여성 호텔리어, 검은 단발머리에 밝은 미소, 네이비 유니폼 재킷과
+      흰 블라우스 차림의 정면 상반신 사진. 배경은 밝은 단색.
+
+      영어: Upper body portrait of a Korean woman in her early 20s, black bob haircut,
+      bright smile, navy hotel uniform jacket with white blouse, gold name tag,
+      plain light background, clean realistic photo style, facing camera.
+    </div>
+
+    <div class="toollinks">
+      <a href="https://gemini.google.com" target="_blank">🎨 Gemini에서 생성하기</a>
+      <a href="https://www.canva.com" target="_blank">🎨 Canva에서 생성하기</a>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="stepblock" id="s3">
+    <p class="steptag">Step 3</p>
+    <h2>HeyGen 단독 홍보영상 대본 만들기</h2>
+    <p class="desc">캐릭터1이 혼자 카메라를 보고 말하는 3장면 대본을 만듭니다. 핵심 규칙: <b style="color:#FFAFC6;">① [장면 설명]과 [대사]를 반드시 분리</b>, <b style="color:#FFAFC6;">② 대사는 장면당 10초 이내(20~25자)</b>, <b style="color:#FFAFC6;">③ 인사 → 소개 → 마무리 3장면 구조</b>. 이 셋 중 하나라도 빠지면 HeyGen에 나눠 넣을 수 없어요.</p>
+
+    <div class="fieldbox">
+      <b>🔴 사용자 입력</b>
+      - STEP 1에서 만든 [캐릭터1 고정 시트]를 그대로 붙여넣기<br>
+      - STEP 0에서 만든 [기획안]의 핵심 메시지·강조 서비스 붙여넣기
+    </div>
+
+    <div class="pbox" id="p3">너는 AI 홍보영상 대본 작가야. 아래 정보를 바탕으로 HeyGen용 단독 홍보영상 대본을 만들어줘.
+
+[캐릭터1 고정 시트 붙여넣기]
+
+브랜드/장소명: [브랜드 이름]
+핵심 메시지: [기획안의 핵심 메시지]
+강조 서비스: [강조 서비스 2~3개]
+영상 분위기: [영상 분위기]
+
+규칙 — 반드시 지켜줘:
+1. 총 3장면으로 구성: 장면1(인사) → 장면2(소개) → 장면3(마무리)
+2. 각 장면은 [장면 설명]과 [대사]를 반드시 분리해서 표기
+3. 대사는 한 장면당 말했을 때 10초 이내가 되도록 20~25자로
+4. 대사는 캐릭터1이 카메라를 보고 시청자에게 직접 말하는 친근한 말투로
+5. 장면1은 인사+자기소개, 장면2는 강조 서비스 소개, 장면3은 놀러오라는 초대 문장
+
+[출력 형식 — 정확히 이대로]
+▶ 장면1(인사)
+[장면 설명]: (배경과 캐릭터의 동작 1문장)
+[대사]: (20~25자)
+
+▶ 장면2(소개)
+[장면 설명]: (배경과 캐릭터의 동작 1문장)
+[대사]: (20~25자)
+
+▶ 장면3(마무리)
+[장면 설명]: (배경과 캐릭터의 동작 1문장)
+[대사]: (20~25자)
+
+마지막으로, 세 장면의 [대사]만 줄바꿈으로 이어붙인 "HeyGen Script 창 붙여넣기용" 버전도 함께 출력해줘.</div>
+    <button class="copybtn" data-copy="p3">📋 복사하기</button>
+
+    <div class="example">
+      <b>🟢 완성 예시 — 오션라이트 호텔 (라미)</b>
+      ▶ 장면1(인사)
+      [장면 설명]: 햇살이 드는 호텔 로비, 라미가 카메라를 보고 손을 흔든다
+      [대사]: 안녕하세요! 오션라이트 호텔의 라미예요.
+
+      ▶ 장면2(소개)
+      [장면 설명]: 오션뷰 객실 창가, 라미가 바다를 가리킨다
+      [대사]: 모든 객실에서 바다가 한눈에 보여요!
+
+      ▶ 장면3(마무리)
+      [장면 설명]: 호텔 입구, 라미가 환하게 웃으며 인사한다
+      [대사]: 오션라이트에서 여러분을 기다릴게요!
+    </div>
+    <div class="pbox" style="margin-top:14px; background:#241832; border-color:var(--violet);">⭐ 사용 순서: HeyGen → Avatars → Photo Avatar에 캐릭터 이미지 업로드 → Create video → Script 창에 "붙여넣기용" 대사 3줄을 통째로 붙여넣기 → 한국어 Voice 선택 → 자막(Captions) 켜기 → Preview → Submit → Download</div>
+
+    <div class="toollinks">
+      <a href="https://www.heygen.com" target="_blank">🗣 HeyGen에서 만들기</a>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="stepblock" id="s4">
+    <p class="steptag">Step 4</p>
+    <h2>Google Flow 대화형 영상 프롬프트 만들기</h2>
+    <p class="desc">두 캐릭터가 대화하는 3장면 영상을 만듭니다. 핵심 규칙: <b style="color:#FFAFC6;">① 발화자를 캐릭터1: / 캐릭터2: 로 반드시 표시</b>, <b style="color:#FFAFC6;">② 한 장면 대사는 합쳐서 8초 이내</b>, <b style="color:#FFAFC6;">③ 만남 → 소개와 호응 → 마무리 3장면 구조</b>, <b style="color:#FFAFC6;">④ 장면 1개 = 생성 1회 = 클립 1개</b>.</p>
+
+    <div class="fieldbox">
+      <b>🔴 사용자 입력</b>
+      - STEP 1에서 만든 [캐릭터1 고정 시트] / [캐릭터2 고정 시트]를 그대로 붙여넣기<br>
+      - 브랜드/장소명: &lt;예: 오션라이트 호텔&gt;<br>
+      - 강조 서비스: &lt;예: 오션뷰 객실, 조식 뷔페&gt;<br>
+      - 영상 분위기: &lt;예: 친근하고 편안함&gt;
+    </div>
+
+    <div class="pbox" id="p4">너는 AI 영상 프롬프트 전문가야. 아래 두 캐릭터가 대화하는 Google Flow(Veo)용 홍보영상 자료를 만들어줘.
+
+[캐릭터1 고정 시트 붙여넣기]
+[캐릭터2 고정 시트 붙여넣기]
+
+브랜드/장소명: [브랜드 이름]
+강조 서비스: [강조 서비스 2~3개]
+영상 분위기: [영상 분위기]
+
+규칙 — 반드시 지켜줘:
+1. 총 3장면으로 구성: 장면1(만남) → 장면2(소개와 호응) → 장면3(마무리)
+2. 각 장면은 [장면 설명] 다음에 캐릭터1: / 캐릭터2: 로 발화자를 반드시 표시
+3. 한 장면의 대사는 두 사람 합쳐서 8초 이내 분량으로 짧게
+4. 캐릭터1은 안내하는 역할, 캐릭터2는 감탄하고 호응하는 역할
+
+먼저 [대화 대본-한글]을 만들고, 그 다음 장면별 영어 프롬프트 3개를 만들어줘.
+영어 프롬프트는 각각 아래 조건을 지킨 완성형 한 문단이어야 해:
+- 두 캐릭터의 외모를 고정 시트 그대로 영어로 자세히 묘사
+- 장면의 배경과 동작 묘사 포함
+- Character 1 says "...", Character 2 replies "..." 구조로 대사 포함 (대사는 한국어 그대로)
+- 마지막에 16:9 aspect ratio, 8 seconds, 분위기 키워드를 포함
+
+[출력 형식 — 정확히 이대로]
+[대화 대본-한글]
+▶ 장면1(만남): [장면 설명] / 캐릭터1: (대사) / 캐릭터2: (대사)
+▶ 장면2(소개와 호응): [장면 설명] / 캐릭터1: (대사) / 캐릭터2: (대사)
+▶ 장면3(마무리): [장면 설명] / 캐릭터1: (대사) / 캐릭터2: (대사)
+
+[Flow 프롬프트-장면1-영어]
+(완성형 한 문단)
+
+[Flow 프롬프트-장면2-영어]
+(완성형 한 문단)
+
+[Flow 프롬프트-장면3-영어]
+(완성형 한 문단)</div>
+    <button class="copybtn" data-copy="p4">📋 복사하기</button>
+
+    <div class="example">
+      <b>🟢 완성 예시 — 장면1 영어 프롬프트</b>
+      A bright hotel lobby with large ocean-view windows. Character 1, a Korean woman in her
+      early 20s with a black bob haircut, wearing a navy hotel uniform jacket with a white
+      blouse and a gold name tag, greets warmly. Character 2, a Korean woman in her mid 20s
+      with long wavy brown hair, wearing a beige trench coat and a small backpack, looks
+      around in amazement. Character 1 says "어서 오세요, 오션라이트 호텔입니다!",
+      Character 2 replies "와, 로비에서 바다가 보여요!". Warm and friendly mood,
+      soft natural lighting, 16:9 aspect ratio, 8 seconds.
+    </div>
+    <div class="pbox" style="margin-top:14px; background:#241832; border-color:var(--violet);">⭐ 사용 순서: labs.google/flow → 새 프로젝트 → "재료로 동영상 만들기(Ingredients to Video)" 모드 → "+" 버튼으로 캐릭터 기준 이미지 2장 등록 → 장면1 프롬프트 입력 후 생성 → 같은 프로젝트에서 장면2, 장면3 반복 → 클립 3개 완성. 한 장면이 어색하면 그 장면만 다시 생성하면 돼요.</div>
+
+    <div class="toollinks">
+      <a href="https://labs.google/flow" target="_blank">🎞 Google Flow에서 만들기</a>
+    </div>
+  </div>
+
+  <p style="text-align:center; margin-top:30px;">
+    <a class="backlink" href="index.html">← 다음은 HeyGen·Google Flow 프롬프트도 자동으로 만들어주는 인터뷰형 도구로</a>
+  </p>
+</div>
+
+<script>
+document.querySelectorAll('.copybtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const id = btn.dataset.copy;
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+      btn.textContent = '✅ 복사됨!';
+      btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent = '📋 복사하기'; btn.classList.remove('copied'); }, 1500);
+    });
+  });
+});
+</script>
+</body>
+</html>
