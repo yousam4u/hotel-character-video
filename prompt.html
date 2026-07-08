@@ -370,5 +370,21 @@ document.querySelectorAll('.copybtn').forEach(btn=>{
   });
 });
 </script>
+<script>
+// 교사용 페이지의 탭(iframe) 안에서 열렸을 때는 내부 링크 클릭 시 페이지 이동 대신 상위 탭만 전환
+(function(){
+  if(window.top === window.self) return;
+  var tabMap = { 'index.html':'student', 'prompt.html':'prompt', 'board.html':'board' };
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href]');
+    if(!a) return;
+    var target = tabMap[a.getAttribute('href')];
+    if(target && window.top && typeof window.top.switchTab === 'function'){
+      e.preventDefault();
+      window.top.switchTab(target);
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -214,15 +214,18 @@
 
 <script>
 // ---- 상단 탭 전환 ----
+function switchTab(name){
+  const targetBtn = document.querySelector('.toptabs .tab[data-tab="'+name+'"]');
+  if(!targetBtn) return;
+  document.querySelectorAll('.toptabs .tab').forEach(b=> b.classList.toggle('active', b===targetBtn));
+  document.querySelectorAll('.tabpanel').forEach(p=> p.classList.toggle('active', p.id === 'panel-'+name));
+  const panel = document.getElementById('panel-'+name);
+  const frame = panel.querySelector('iframe[data-src]');
+  if(frame){ frame.src = frame.dataset.src; frame.removeAttribute('data-src'); }
+}
+window.switchTab = switchTab; // 임베드된 학생용/프롬프트/게시판 페이지가 내부 링크 클릭 시 탭만 바꾸도록 호출
 document.querySelectorAll('.toptabs .tab').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const name = btn.dataset.tab;
-    document.querySelectorAll('.toptabs .tab').forEach(b=> b.classList.toggle('active', b===btn));
-    document.querySelectorAll('.tabpanel').forEach(p=> p.classList.toggle('active', p.id === 'panel-'+name));
-    const panel = document.getElementById('panel-'+name);
-    const frame = panel.querySelector('iframe[data-src]');
-    if(frame){ frame.src = frame.dataset.src; frame.removeAttribute('data-src'); }
-  });
+  btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
 });
 </script>
 
