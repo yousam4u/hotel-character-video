@@ -183,7 +183,7 @@
   </nav>
 
   <div class="main">
-    <div class="card">
+    <div class="card" id="composerCard">
       <h2>✏️ 새 글 작성</h2>
       <div class="errbox" id="composerErr"></div>
       <div class="okbox" id="composerOk"></div>
@@ -200,6 +200,10 @@
       <p class="filehint" id="pf_fileInfo"></p>
       <p class="post-as" id="postAsLabel">이 글은 <b>학생 자료</b>로 게시돼요.</p>
       <button class="btn btn-primary" id="submitPost">게시하기</button>
+    </div>
+    <div class="card" id="composerLocked" style="display:none; text-align:center; padding:40px 24px;">
+      <p style="font-size:15px; color:var(--muted); margin:0 0 16px; line-height:1.7;">🔒 이 카테고리는 선생님만 글을 쓸 수 있어요.<br>학생은 <b style="color:#EDEBF7;">전체보기</b> 또는 <b style="color:#EDEBF7;">학생 제출 자료</b>에서 글을 작성해주세요.</p>
+      <button class="btn btn-ghost btn-small" id="composerLockedLoginBtn">🔑 선생님이신가요? 로그인</button>
     </div>
 
     <div class="feed-head">
@@ -381,8 +385,16 @@ function setFilter(f){
   document.querySelectorAll('.sidebar-btn').forEach(b=> b.classList.toggle('active', b.dataset.filter===f));
   const titles = { all:'📌 전체 게시글', teacher:'📚 You쌤 공유 자료', student:'🙋 학생 제출 자료' };
   document.getElementById('feedTitle').textContent = titles[f];
+  updateComposerVisibility();
   renderPosts();
 }
+
+function updateComposerVisibility(){
+  const locked = currentFilter === 'teacher' && !isAdmin;
+  document.getElementById('composerCard').style.display = locked ? 'none' : 'block';
+  document.getElementById('composerLocked').style.display = locked ? 'block' : 'none';
+}
+document.getElementById('composerLockedLoginBtn').addEventListener('click', ()=> document.getElementById('adminToggleBtn').click());
 document.querySelectorAll('.sidebar-btn').forEach(b=>{
   b.addEventListener('click', ()=> setFilter(b.dataset.filter));
 });
@@ -552,6 +564,7 @@ document.getElementById('pwSubmit').addEventListener('click', async ()=>{
   document.getElementById('adminBadge').style.display='flex';
   updatePostAsLabel();
   updateAuthorField();
+  updateComposerVisibility();
   renderPosts();
 });
 document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('pwSubmit').click(); });
@@ -562,6 +575,7 @@ document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{
   document.getElementById('adminToggleBtn').style.display='block';
   updatePostAsLabel();
   updateAuthorField();
+  updateComposerVisibility();
   renderPosts();
 });
 
@@ -632,6 +646,7 @@ document.getElementById('editSave').addEventListener('click', async ()=>{
   }
   updatePostAsLabel();
   updateAuthorField();
+  updateComposerVisibility();
   await refresh();
 })();
 </script>
