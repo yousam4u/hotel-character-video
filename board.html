@@ -63,6 +63,7 @@
   }
   textarea{min-height:90px;}
   input:focus, textarea:focus, select:focus{outline:none; border-color:var(--violet);}
+  input[readonly]{color:#C9C2F0; border-color:var(--violet); background:var(--navy2); cursor:not-allowed;}
   label.flabel{display:block; font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:700;}
   .filehint{font-size:11.5px; color:var(--muted); margin:-4px 0 10px;}
   .post-as{font-size:12.5px; color:var(--muted); margin:2px 0 12px;}
@@ -186,7 +187,7 @@
       <h2>✏️ 새 글 작성</h2>
       <div class="errbox" id="composerErr"></div>
       <div class="okbox" id="composerOk"></div>
-      <label class="flabel">이름 또는 팀명</label>
+      <label class="flabel" id="pf_authorLabel">이름 또는 팀명</label>
       <input type="text" id="pf_author" placeholder="예: 2팀 김민수" maxlength="50">
       <label class="flabel">제목</label>
       <input type="text" id="pf_title" placeholder="예: 오션라이트 호텔 캐릭터 완성했어요!" maxlength="200">
@@ -353,10 +354,26 @@ const adminPwKey = 'board_admin_pw';
 
 function getAdminPw(){ return sessionStorage.getItem(adminPwKey) || ''; }
 
+const TEACHER_AUTHOR_NAME = 'You쌤';
+
 function updatePostAsLabel(){
   document.getElementById('postAsLabel').innerHTML = isAdmin
     ? '이 글은 <b>선생님 자료</b>로 게시돼요.'
     : '이 글은 <b>학생 자료</b>로 게시돼요.';
+}
+
+function updateAuthorField(){
+  const input = document.getElementById('pf_author');
+  const label = document.getElementById('pf_authorLabel');
+  if(isAdmin){
+    input.value = TEACHER_AUTHOR_NAME;
+    input.readOnly = true;
+    label.textContent = '작성자 (자동)';
+  }else{
+    if(input.readOnly){ input.value=''; }
+    input.readOnly = false;
+    label.textContent = '이름 또는 팀명';
+  }
 }
 
 function setFilter(f){
@@ -494,7 +511,7 @@ document.getElementById('submitPost').addEventListener('click', async ()=>{
       });
     }
 
-    document.getElementById('pf_author').value='';
+    updateAuthorField();
     document.getElementById('pf_title').value='';
     document.getElementById('pf_content').value='';
     document.getElementById('pf_link').value='';
@@ -534,6 +551,7 @@ document.getElementById('pwSubmit').addEventListener('click', async ()=>{
   document.getElementById('adminToggleBtn').style.display='none';
   document.getElementById('adminBadge').style.display='flex';
   updatePostAsLabel();
+  updateAuthorField();
   renderPosts();
 });
 document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('pwSubmit').click(); });
@@ -543,6 +561,7 @@ document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{
   document.getElementById('adminBadge').style.display='none';
   document.getElementById('adminToggleBtn').style.display='block';
   updatePostAsLabel();
+  updateAuthorField();
   renderPosts();
 });
 
@@ -612,6 +631,7 @@ document.getElementById('editSave').addEventListener('click', async ()=>{
     document.getElementById('adminBadge').style.display='flex';
   }
   updatePostAsLabel();
+  updateAuthorField();
   await refresh();
 })();
 </script>
