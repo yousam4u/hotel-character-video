@@ -19,7 +19,7 @@
   }
   .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 
-  .deck{position:relative; width:100%; height:100vh; overflow:hidden;}
+  .deck{position:relative; width:100%; height:calc(100vh - 46px); overflow:hidden;}
   .slide{
     position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center;
     padding:60px 70px; opacity:0; transform:translateX(30px); transition:opacity .4s ease, transform .4s ease;
@@ -144,7 +144,27 @@
     .quiz-card .qhintlabel{display:none;}
   }
 
-  .progress{position:fixed; top:0; left:0; height:4px; background:linear-gradient(90deg,var(--violet),var(--pink)); transition:width .3s ease; z-index:10;}
+  /* 상단 탭 네비게이션 — 슬라이드/학생용 도구/프롬프트/게시판 이동 */
+  .toptabs{
+    position:fixed; top:0; left:0; right:0; height:46px; z-index:20;
+    display:flex; align-items:center; gap:6px; padding:0 16px;
+    background:var(--navy2); border-bottom:1px solid var(--line); overflow-x:auto;
+  }
+  .toptabs .tab{
+    flex:0 0 auto; background:transparent; border:1.5px solid transparent; color:var(--muted);
+    padding:8px 16px; border-radius:999px; font-size:13.5px; font-weight:700; white-space:nowrap;
+    font-family:inherit; cursor:pointer;
+  }
+  .toptabs .tab:hover{color:#fff;}
+  .toptabs .tab.active{background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;}
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+  .tabpanel.iframe-panel{position:fixed; top:46px; left:0; right:0; bottom:0;}
+  .tabframe{width:100%; height:100%; border:0; display:block;}
+  #panel-slides{margin-top:46px;}
+  @media(max-width:700px){ .toptabs{height:40px;} .toptabs .tab{padding:6px 12px; font-size:12px;} .tabpanel.iframe-panel{top:40px;} #panel-slides{margin-top:40px;} }
+
+  .progress{position:fixed; top:46px; left:0; height:4px; background:linear-gradient(90deg,var(--violet),var(--pink)); transition:width .3s ease; z-index:10;}
   .navbar{
     position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
     display:flex; align-items:center; gap:14px; background:var(--navy2); border:1px solid var(--line);
@@ -162,23 +182,49 @@
     .checklist .item .label{min-width:100%;} .steplist .stext{font-size:15.5px;}
   }
   .session-badge{
-    position:fixed; top:16px; left:24px; z-index:11;
+    position:fixed; top:62px; left:24px; z-index:11;
     padding:7px 16px; border-radius:999px; font-size:13px; font-weight:800;
     letter-spacing:0.5px; color:#fff; transition:background .3s ease;
   }
-  @media(max-width:700px){ .session-badge{font-size:11px; padding:6px 12px; top:10px; left:14px;} }
+  @media(max-width:700px){ .session-badge{font-size:11px; padding:6px 12px; top:52px; left:14px;} }
 </style>
 </head>
 <body>
-<div class="progress" id="progress"></div>
-<div class="session-badge" id="sessionBadge">전체 개요</div>
-<div class="deck" id="deck"></div>
-<div class="navbar">
-  <button id="prevBtn">◀</button>
-  <div class="dots" id="dots"></div>
-  <button id="nextBtn">▶</button>
-  <span class="counter" id="counter">1/10</span>
+<div class="toptabs" id="toptabs">
+  <button class="tab active" data-tab="slides">📊 슬라이드</button>
+  <button class="tab" data-tab="student">🎬 학생용 도구</button>
+  <button class="tab" data-tab="prompt">✍️ 프롬프트 가이드</button>
+  <button class="tab" data-tab="board">📋 자료 게시판</button>
 </div>
+
+<div class="tabpanel active" id="panel-slides">
+  <div class="progress" id="progress"></div>
+  <div class="session-badge" id="sessionBadge">전체 개요</div>
+  <div class="deck" id="deck"></div>
+  <div class="navbar">
+    <button id="prevBtn">◀</button>
+    <div class="dots" id="dots"></div>
+    <button id="nextBtn">▶</button>
+    <span class="counter" id="counter">1/10</span>
+  </div>
+</div>
+<div class="tabpanel iframe-panel" id="panel-student"><iframe class="tabframe" data-src="https://yousam4u.github.io/hotel-character-video/"></iframe></div>
+<div class="tabpanel iframe-panel" id="panel-prompt"><iframe class="tabframe" data-src="https://yousam4u.github.io/hotel-character-video/prompt.html"></iframe></div>
+<div class="tabpanel iframe-panel" id="panel-board"><iframe class="tabframe" data-src="https://yousam4u.github.io/hotel-character-video/board.html"></iframe></div>
+
+<script>
+// ---- 상단 탭 전환 ----
+document.querySelectorAll('.toptabs .tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const name = btn.dataset.tab;
+    document.querySelectorAll('.toptabs .tab').forEach(b=> b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.tabpanel').forEach(p=> p.classList.toggle('active', p.id === 'panel-'+name));
+    const panel = document.getElementById('panel-'+name);
+    const frame = panel.querySelector('iframe[data-src]');
+    if(frame){ frame.src = frame.dataset.src; frame.removeAttribute('data-src'); }
+  });
+});
+</script>
 
 <script>
 const SLIDES_HTML = [];

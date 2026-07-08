@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 캐릭터 홍보영상 제작소 — 자료 게시판</title>
+<style>
+  :root{
+    --navy:#12162A; --navy2:#1B2140; --navy3:#242B52;
+    --indigo:#3B3F91; --violet:#8B6BD4; --pink:#F0577F;
+    --muted:#9AA0C9; --line:#2E3560;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--navy); color:#EDEBF7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,sans-serif;
+    min-height:100vh;
+  }
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .wrap{max-width:760px; margin:0 auto; padding:28px 20px 100px;}
+
+  .backlink{color:var(--muted); font-size:12.5px; text-decoration:none;}
+  .backlink:hover{color:#fff;}
+  .kicker{font-size:11px; letter-spacing:3px; color:var(--violet); font-weight:800; text-transform:uppercase; margin:18px 0 6px;}
+  .title{font-size:28px; font-weight:900; letter-spacing:-0.5px; margin:0 0 6px;}
+  .subtitle{color:var(--muted); font-size:14px; margin:0 0 22px; line-height:1.6;}
+
+  .card{
+    background:var(--navy2); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; margin-bottom:16px;
+  }
+  .card h2{font-size:17px; font-weight:800; margin:0 0 14px;}
+
+  input[type=text], input[type=url], input[type=password], textarea{
+    width:100%; background:var(--navy); border:1.5px solid var(--line); border-radius:10px;
+    padding:12px 14px; color:#fff; font-size:14.5px; font-family:inherit;
+    margin-bottom:10px; resize:vertical;
+  }
+  textarea{min-height:90px;}
+  input:focus, textarea:focus{outline:none; border-color:var(--violet);}
+  label.flabel{display:block; font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:700;}
+
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .btn{padding:11px 20px; border-radius:10px; font-size:14px; font-weight:700; transition:opacity .15s ease, transform .1s ease;}
+  .btn:active{transform:scale(.98);}
+  .btn-ghost{background:transparent; color:var(--muted); border:1.5px solid var(--line);}
+  .btn-ghost:hover{color:#fff; border-color:var(--muted);}
+  .btn-primary{background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;}
+  .btn-primary:disabled{opacity:.5; cursor:not-allowed;}
+  .btn-primary:not(:disabled):hover{opacity:.92;}
+  .btn-danger{background:#5D2233; color:#FFB4C8; font-size:12.5px; padding:8px 14px;}
+  .btn-danger:hover{background:#7A2C42;}
+  .btn-small{font-size:12.5px; padding:8px 14px;}
+
+  .feed-head{display:flex; align-items:center; justify-content:space-between; margin:28px 0 14px;}
+  .feed-head h2{font-size:18px; font-weight:800; margin:0;}
+
+  .post{
+    background:var(--navy2); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; margin-bottom:14px;
+  }
+  .post-meta{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .post-author{font-weight:800; font-size:13.5px; color:#C9C2F0;}
+  .post-time{font-size:12px; color:var(--muted);}
+  .post-title{font-size:17px; font-weight:800; margin:0 0 8px; line-height:1.4;}
+  .post-content{font-size:14.5px; color:#DCD9EF; line-height:1.7; white-space:pre-wrap; margin:0 0 10px;}
+  .post-link{
+    display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700;
+    color:#fff; background:var(--navy3); padding:8px 14px; border-radius:8px; text-decoration:none;
+  }
+  .post-link:hover{background:var(--indigo);}
+  .post-actions{display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);}
+
+  .loading{display:none; text-align:center; padding:50px 20px; color:var(--muted); font-size:14px;}
+  .loading.active{display:block;}
+  .reel{
+    width:44px; height:44px; margin:0 auto 16px; border-radius:50%;
+    border:4px solid var(--line); border-top-color:var(--violet); animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .empty{display:none; text-align:center; padding:50px 20px; color:var(--muted); font-size:14px;}
+  .empty.active{display:block;}
+
+  .errbox{
+    display:none; background:#3A1B28; border:1px solid #7A3550; color:#F5B8C9;
+    padding:12px 14px; border-radius:10px; font-size:13px; margin-bottom:10px;
+  }
+  .errbox.show{display:block;}
+  .okbox{
+    display:none; background:#132A1D; border:1px solid #3B5D48; color:#8CE0A8;
+    padding:12px 14px; border-radius:10px; font-size:13px; margin-bottom:10px;
+  }
+  .okbox.show{display:block;}
+
+  /* 관리자 토글 버튼 & 배지 */
+  .admin-toggle{
+    position:fixed; right:20px; bottom:20px; z-index:20;
+    background:var(--navy2); border:1.5px solid var(--line); color:var(--muted);
+    padding:12px 18px; border-radius:999px; font-size:13px; font-weight:700;
+    box-shadow:0 6px 20px rgba(0,0,0,.35);
+  }
+  .admin-toggle:hover{border-color:var(--violet); color:#fff;}
+  .admin-badge{
+    position:fixed; top:16px; right:20px; z-index:20;
+    background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;
+    padding:8px 14px; border-radius:999px; font-size:12.5px; font-weight:800;
+    display:flex; align-items:center; gap:10px; box-shadow:0 4px 14px rgba(0,0,0,.3);
+  }
+  .admin-badge button{background:rgba(255,255,255,.2); color:#fff; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700;}
+  .admin-badge button:hover{background:rgba(255,255,255,.35);}
+
+  /* 모달 */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(8,10,22,.7); z-index:30;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal{
+    background:var(--navy2); border:1px solid var(--line); border-radius:16px;
+    padding:26px 24px; width:100%; max-width:380px;
+  }
+  .modal h3{margin:0 0 14px; font-size:17px; font-weight:800;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:6px;}
+
+  @media(max-width:520px){
+    .title{font-size:22px;} .card{padding:16px 18px;} .post{padding:16px 18px;}
+    .admin-toggle{right:14px; bottom:14px; padding:10px 14px; font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← 학생용 제작 도구로 돌아가기</a>
+  <p class="kicker">AI 캐릭터 홍보영상 제작소 · 자료 게시판</p>
+  <h1 class="title">우리 팀 자료를 함께 나눠요</h1>
+  <p class="subtitle">완성한 기획안, 캐릭터 이미지 링크, HeyGen·Google Flow 영상 링크, 팀에서 얻은 팁을 자유롭게 올려주세요. 누구나 글을 쓸 수 있고, 수정·삭제는 선생님만 할 수 있어요.</p>
+
+  <div class="card">
+    <h2>✏️ 새 글 작성</h2>
+    <div class="errbox" id="composerErr"></div>
+    <div class="okbox" id="composerOk"></div>
+    <label class="flabel">이름 또는 팀명</label>
+    <input type="text" id="pf_author" placeholder="예: 2팀 김민수" maxlength="50">
+    <label class="flabel">제목</label>
+    <input type="text" id="pf_title" placeholder="예: 오션라이트 호텔 캐릭터 완성했어요!" maxlength="200">
+    <label class="flabel">내용</label>
+    <textarea id="pf_content" placeholder="어떤 작업을 했는지, 어려웠던 점이나 팁을 적어주세요." maxlength="4000"></textarea>
+    <label class="flabel">공유 링크 (선택 — HeyGen 영상, 캐릭터 이미지, 발표자료 등)</label>
+    <input type="url" id="pf_link" placeholder="https://...">
+    <button class="btn btn-primary" id="submitPost">게시하기</button>
+  </div>
+
+  <div class="feed-head">
+    <h2>📌 게시글 목록</h2>
+    <button class="btn btn-ghost btn-small" id="refreshBtn">🔄 새로고침</button>
+  </div>
+
+  <div class="loading" id="loadingView"><div class="reel"></div>불러오는 중...</div>
+  <div class="empty" id="emptyView">아직 게시된 글이 없어요. 첫 글을 남겨보세요! 🎬</div>
+  <div id="postList"></div>
+</div>
+
+<button class="admin-toggle" id="adminToggleBtn">🔑 선생님 로그인</button>
+<div class="admin-badge" id="adminBadge" style="display:none;">🔑 관리자 모드<button id="adminLogoutBtn">로그아웃</button></div>
+
+<div class="modal-overlay" id="pwModal" style="display:none;">
+  <div class="modal">
+    <h3>관리자 로그인</h3>
+    <input type="password" id="pwInput" placeholder="비밀번호">
+    <div class="errbox" id="pwErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="pwCancel">취소</button>
+      <button class="btn btn-primary" id="pwSubmit">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editModal" style="display:none;">
+  <div class="modal" style="max-width:480px;">
+    <h3>글 수정</h3>
+    <div class="errbox" id="editErr"></div>
+    <label class="flabel">제목</label>
+    <input type="text" id="ed_title" maxlength="200">
+    <label class="flabel">내용</label>
+    <textarea id="ed_content" maxlength="4000"></textarea>
+    <label class="flabel">공유 링크</label>
+    <input type="url" id="ed_link">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="editCancel">취소</button>
+      <button class="btn btn-primary" id="editSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://cdipanrgxnpnqwivbhqq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkaXBhbnJneG5wbnF3aXZiaHFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MDc3MTAsImV4cCI6MjA5OTA4MzcxMH0.oka45IlznmY8UEbu5f2urSkgEQeH8jeB-zUvWK-16S8';
+
+async function sbFetch(path, options={}){
+  return fetch(SUPABASE_URL + path, {
+    ...options,
+    headers:{
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization':'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type':'application/json',
+      ...(options.headers||{})
+    }
+  });
+}
+
+async function loadPosts(){
+  const res = await sbFetch('/rest/v1/posts?select=*&order=created_at.desc');
+  if(!res.ok) throw new Error('불러오기 실패');
+  return res.json();
+}
+async function createPost(payload){
+  const res = await sbFetch('/rest/v1/posts', {
+    method:'POST',
+    headers:{ 'Prefer':'return=representation' },
+    body: JSON.stringify([payload])
+  });
+  if(!res.ok) throw new Error('게시 중 문제가 발생했어요.');
+  return res.json();
+}
+async function verifyAdmin(password){
+  const res = await sbFetch('/rest/v1/rpc/board_verify_admin', { method:'POST', body: JSON.stringify({p_password:password}) });
+  if(!res.ok) return false;
+  return res.json();
+}
+async function deletePostRemote(id, password){
+  const res = await sbFetch('/rest/v1/rpc/board_delete_post', { method:'POST', body: JSON.stringify({p_id:id, p_password:password}) });
+  if(!res.ok) throw new Error('삭제에 실패했어요. 관리자 비밀번호를 다시 확인해주세요.');
+  return res.json();
+}
+async function updatePostRemote(id, password, title, content, link_url){
+  const res = await sbFetch('/rest/v1/rpc/board_update_post', {
+    method:'POST',
+    body: JSON.stringify({p_id:id, p_password:password, p_title:title, p_content:content, p_link_url: link_url||null})
+  });
+  if(!res.ok) throw new Error('수정에 실패했어요. 관리자 비밀번호를 다시 확인해주세요.');
+  return res.json();
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function safeLink(url){
+  if(!url) return null;
+  const trimmed = url.trim();
+  if(/^https?:\/\//i.test(trimmed)) return trimmed;
+  return null;
+}
+function formatTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+}
+
+let posts = [];
+let isAdmin = false;
+const adminPwKey = 'board_admin_pw';
+
+function getAdminPw(){ return sessionStorage.getItem(adminPwKey) || ''; }
+
+function renderPosts(){
+  const list = document.getElementById('postList');
+  const empty = document.getElementById('emptyView');
+  if(posts.length === 0){ list.innerHTML=''; empty.classList.add('active'); return; }
+  empty.classList.remove('active');
+  list.innerHTML = posts.map(p => {
+    const link = safeLink(p.link_url);
+    return `
+    <div class="post" data-id="${p.id}">
+      <div class="post-meta"><span class="post-author">${escapeHtml(p.author)}</span><span class="post-time">${formatTime(p.created_at)}</span></div>
+      <h3 class="post-title">${escapeHtml(p.title)}</h3>
+      <p class="post-content">${escapeHtml(p.content)}</p>
+      ${link ? `<a class="post-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">🔗 링크 열기</a>` : ''}
+      ${isAdmin ? `
+        <div class="post-actions">
+          <button class="btn btn-ghost btn-small" data-edit="${p.id}">✏️ 수정</button>
+          <button class="btn btn-danger" data-delete="${p.id}">🗑 삭제</button>
+        </div>` : ''}
+    </div>`;
+  }).join('');
+
+  if(isAdmin){
+    list.querySelectorAll('[data-delete]').forEach(btn=>{
+      btn.addEventListener('click', ()=> onDelete(Number(btn.dataset.delete)));
+    });
+    list.querySelectorAll('[data-edit]').forEach(btn=>{
+      btn.addEventListener('click', ()=> openEditModal(Number(btn.dataset.edit)));
+    });
+  }
+}
+
+async function refresh(){
+  document.getElementById('loadingView').classList.add('active');
+  document.getElementById('postList').innerHTML='';
+  document.getElementById('emptyView').classList.remove('active');
+  try{
+    posts = await loadPosts();
+    renderPosts();
+  }catch(err){
+    showComposerErr('게시글을 불러오지 못했어요. 새로고침을 눌러 다시 시도해주세요.');
+  }finally{
+    document.getElementById('loadingView').classList.remove('active');
+  }
+}
+
+function showComposerErr(msg){
+  const e = document.getElementById('composerErr');
+  e.textContent = '⚠ ' + msg; e.classList.add('show');
+  setTimeout(()=> e.classList.remove('show'), 4000);
+}
+function showComposerOk(msg){
+  const o = document.getElementById('composerOk');
+  o.textContent = msg; o.classList.add('show');
+  setTimeout(()=> o.classList.remove('show'), 3000);
+}
+
+document.getElementById('submitPost').addEventListener('click', async ()=>{
+  const author = document.getElementById('pf_author').value.trim();
+  const title = document.getElementById('pf_title').value.trim();
+  const content = document.getElementById('pf_content').value.trim();
+  const link_url = document.getElementById('pf_link').value.trim();
+  if(!author){ showComposerErr('이름 또는 팀명을 입력해주세요.'); return; }
+  if(!title){ showComposerErr('제목을 입력해주세요.'); return; }
+  if(!content){ showComposerErr('내용을 입력해주세요.'); return; }
+  if(link_url && !safeLink(link_url)){ showComposerErr('링크는 http:// 또는 https://로 시작해야 해요.'); return; }
+
+  const btn = document.getElementById('submitPost');
+  btn.disabled = true; btn.textContent = '게시하는 중...';
+  try{
+    await createPost({ author, title, content, link_url: link_url || null });
+    document.getElementById('pf_author').value='';
+    document.getElementById('pf_title').value='';
+    document.getElementById('pf_content').value='';
+    document.getElementById('pf_link').value='';
+    showComposerOk('✅ 게시되었습니다!');
+    await refresh();
+  }catch(err){
+    showComposerErr(err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = '게시하기';
+  }
+});
+document.getElementById('refreshBtn').addEventListener('click', refresh);
+
+// ---- 관리자 로그인 ----
+const pwModal = document.getElementById('pwModal');
+document.getElementById('adminToggleBtn').addEventListener('click', ()=>{
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwErr').classList.remove('show');
+  pwModal.style.display='flex';
+  document.getElementById('pwInput').focus();
+});
+document.getElementById('pwCancel').addEventListener('click', ()=> pwModal.style.display='none');
+document.getElementById('pwSubmit').addEventListener('click', async ()=>{
+  const pw = document.getElementById('pwInput').value;
+  const ok = await verifyAdmin(pw);
+  if(!ok){
+    const e = document.getElementById('pwErr');
+    e.textContent = '⚠ 비밀번호가 올바르지 않습니다.'; e.classList.add('show');
+    return;
+  }
+  sessionStorage.setItem(adminPwKey, pw);
+  isAdmin = true;
+  pwModal.style.display='none';
+  document.getElementById('adminToggleBtn').style.display='none';
+  document.getElementById('adminBadge').style.display='flex';
+  renderPosts();
+});
+document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('pwSubmit').click(); });
+document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{
+  sessionStorage.removeItem(adminPwKey);
+  isAdmin = false;
+  document.getElementById('adminBadge').style.display='none';
+  document.getElementById('adminToggleBtn').style.display='block';
+  renderPosts();
+});
+
+async function onDelete(id){
+  if(!confirm('이 글을 삭제할까요? 되돌릴 수 없어요.')) return;
+  try{
+    await deletePostRemote(id, getAdminPw());
+    posts = posts.filter(p=>p.id!==id);
+    renderPosts();
+  }catch(err){ alert(err.message); }
+}
+
+const editModal = document.getElementById('editModal');
+let editingId = null;
+function openEditModal(id){
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  editingId = id;
+  document.getElementById('ed_title').value = p.title;
+  document.getElementById('ed_content').value = p.content;
+  document.getElementById('ed_link').value = p.link_url || '';
+  document.getElementById('editErr').classList.remove('show');
+  editModal.style.display='flex';
+}
+document.getElementById('editCancel').addEventListener('click', ()=> editModal.style.display='none');
+document.getElementById('editSave').addEventListener('click', async ()=>{
+  const title = document.getElementById('ed_title').value.trim();
+  const content = document.getElementById('ed_content').value.trim();
+  const link_url = document.getElementById('ed_link').value.trim();
+  if(!title || !content){
+    const e = document.getElementById('editErr');
+    e.textContent = '⚠ 제목과 내용을 입력해주세요.'; e.classList.add('show');
+    return;
+  }
+  try{
+    await updatePostRemote(editingId, getAdminPw(), title, content, link_url);
+    editModal.style.display='none';
+    await refresh();
+  }catch(err){
+    const e = document.getElementById('editErr');
+    e.textContent = '⚠ ' + err.message; e.classList.add('show');
+  }
+});
+
+// 세션에 관리자 비밀번호가 남아있으면(같은 브라우저 탭) 자동 재검증 후 관리자 모드 복원
+(async function initAdmin(){
+  const saved = getAdminPw();
+  if(saved && await verifyAdmin(saved)){
+    isAdmin = true;
+    document.getElementById('adminToggleBtn').style.display='none';
+    document.getElementById('adminBadge').style.display='flex';
+  }
+  await refresh();
+})();
+</script>
+</body>
+</html>
