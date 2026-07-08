@@ -172,13 +172,13 @@
   <a class="backlink" href="index.html">← 학생용 제작 도구로 돌아가기</a>
   <p class="kicker">AI 캐릭터 홍보영상 제작소 · 자료 게시판</p>
   <h1 class="title">우리 팀 자료를 함께 나눠요</h1>
-  <p class="subtitle">완성한 기획안, 캐릭터 이미지, HeyGen·Google Flow 영상 링크나 파일을 자유롭게 올려주세요. 왼쪽에서 선생님 자료와 학생 자료를 구분해서 볼 수 있어요. 누구나 글을 쓸 수 있고, 수정·삭제는 선생님만 할 수 있어요.</p>
+  <p class="subtitle">완성한 기획안, 캐릭터 이미지, HeyGen·Google Flow 영상 링크나 파일을 자유롭게 올려주세요. 왼쪽에서 You쌤 공유 자료와 학생 자료를 구분해서 볼 수 있어요. 누구나 글을 쓸 수 있고, 수정·삭제는 선생님만 할 수 있어요.</p>
 </div>
 
 <div class="layout">
   <nav class="sidebar" id="sidebar">
     <button class="sidebar-btn active" data-filter="all">🗂 전체보기 <span class="count" id="cnt_all">0</span></button>
-    <button class="sidebar-btn" data-filter="teacher">📚 선생님 자료 <span class="count" id="cnt_teacher">0</span></button>
+    <button class="sidebar-btn" data-filter="teacher">📚 You쌤 공유 자료 <span class="count" id="cnt_teacher">0</span></button>
     <button class="sidebar-btn" data-filter="student">🙋 학생 제출 자료 <span class="count" id="cnt_student">0</span></button>
   </nav>
 
@@ -235,7 +235,7 @@
     <label class="flabel">분류</label>
     <select id="ed_category">
       <option value="student">🙋 학생 자료</option>
-      <option value="teacher">📚 선생님 자료</option>
+      <option value="teacher">📚 You쌤 공유 자료</option>
     </select>
     <label class="flabel">제목</label>
     <input type="text" id="ed_title" maxlength="200">
@@ -358,7 +358,7 @@ const TEACHER_AUTHOR_NAME = 'You쌤';
 
 function updatePostAsLabel(){
   document.getElementById('postAsLabel').innerHTML = isAdmin
-    ? '이 글은 <b>선생님 자료</b>로 게시돼요.'
+    ? '이 글은 <b>You쌤 공유 자료</b>로 게시돼요.'
     : '이 글은 <b>학생 자료</b>로 게시돼요.';
 }
 
@@ -379,7 +379,7 @@ function updateAuthorField(){
 function setFilter(f){
   currentFilter = f;
   document.querySelectorAll('.sidebar-btn').forEach(b=> b.classList.toggle('active', b.dataset.filter===f));
-  const titles = { all:'📌 전체 게시글', teacher:'📚 선생님 자료', student:'🙋 학생 제출 자료' };
+  const titles = { all:'📌 전체 게시글', teacher:'📚 You쌤 공유 자료', student:'🙋 학생 제출 자료' };
   document.getElementById('feedTitle').textContent = titles[f];
   renderPosts();
 }
@@ -388,7 +388,7 @@ document.querySelectorAll('.sidebar-btn').forEach(b=>{
 });
 
 function emptyMessage(){
-  if(currentFilter==='teacher') return '아직 선생님이 올린 자료가 없어요.';
+  if(currentFilter==='teacher') return '아직 You쌤이 올린 자료가 없어요.';
   if(currentFilter==='student') return '아직 학생이 제출한 자료가 없어요.';
   return '아직 게시된 글이 없어요. 첫 글을 남겨보세요! 🎬';
 }
@@ -406,7 +406,7 @@ function renderPosts(){
 
   list.innerHTML = filtered.map(p => {
     const link = safeLink(p.link_url);
-    const catLabel = p.category==='teacher' ? '📚 선생님 자료' : '🙋 학생 자료';
+    const catLabel = p.category==='teacher' ? '📚 You쌤 공유 자료' : '🙋 학생 자료';
     const catClass = p.category==='teacher' ? 'cat-teacher' : 'cat-student';
     return `
     <div class="post" data-id="${p.id}">
