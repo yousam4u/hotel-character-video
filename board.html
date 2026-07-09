@@ -104,6 +104,34 @@
   .post-link:hover{background:var(--indigo);}
   .post-actions{display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);}
 
+  /* ---------- 질문·답변(Q&A) ---------- */
+  .qa-toggle{
+    margin-top:12px; padding-top:12px; border-top:1px solid var(--line);
+    background:none; border-left:none; border-right:none; border-bottom:none;
+    color:var(--violet); font-size:13px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; gap:6px; width:100%; text-align:left;
+  }
+  .qa-toggle:hover{color:#fff;}
+  .qa-panel{display:none; margin-top:10px;}
+  .qa-panel.open{display:block;}
+  .qa-item{background:var(--navy); border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin-bottom:8px;}
+  .qa-item.admin{border-color:var(--violet); background:rgba(139,107,212,.1);}
+  .qa-item-meta{display:flex; align-items:center; gap:8px; margin-bottom:4px;}
+  .qa-author{font-size:12px; font-weight:800; color:#C9C2F0;}
+  .qa-badge{
+    font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px;
+    background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;
+  }
+  .qa-time{font-size:11px; color:var(--muted);}
+  .qa-text{font-size:13.5px; color:#DCD9EF; line-height:1.6; white-space:pre-wrap;}
+  .qa-delete{background:none; border:none; color:var(--muted); font-size:11px; cursor:pointer; margin-left:auto; padding:0;}
+  .qa-delete:hover{color:#FFB4C8;}
+  .qa-empty{font-size:12.5px; color:var(--muted); margin:4px 0 10px;}
+  .qa-form{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+  .qa-form input[type=text]{flex:1; min-width:140px; margin-bottom:0; font-size:13px; padding:9px 12px;}
+  .qa-form input.qa-author-input{flex:0 0 100px;}
+  .qa-form button{flex:0 0 auto;}
+
   .loading{display:none; text-align:center; padding:50px 20px; color:var(--muted); font-size:14px;}
   .loading.active{display:block;}
   .reel{
@@ -304,6 +332,30 @@ async function deletePostRemote(id, password){
   if(!res.ok) throw new Error('삭제에 실패했어요. 관리자 비밀번호를 다시 확인해주세요.');
   return res.json();
 }
+async function loadComments(){
+  const res = await sbFetch('/rest/v1/comments?select=*&order=created_at.asc');
+  if(!res.ok) throw new Error('불러오기 실패');
+  return res.json();
+}
+async function createQuestion(payload){
+  const res = await sbFetch('/rest/v1/comments', {
+    method:'POST',
+    headers:{ 'Prefer':'return=representation' },
+    body: JSON.stringify([payload])
+  });
+  if(!res.ok) throw new Error('질문 등록에 실패했어요.');
+  return res.json();
+}
+async function createTeacherComment(payload){
+  const res = await sbFetch('/rest/v1/rpc/board_create_teacher_comment', { method:'POST', body: JSON.stringify(payload) });
+  if(!res.ok) throw new Error('답변 등록에 실패했어요. 관리자 비밀번호를 다시 확인해주세요.');
+  return res.json();
+}
+async function deleteCommentRemote(id, password){
+  const res = await sbFetch('/rest/v1/rpc/board_delete_comment', { method:'POST', body: JSON.stringify({p_id:id, p_password:password}) });
+  if(!res.ok) throw new Error('삭제에 실패했어요.');
+  return res.json();
+}
 async function updatePostRemote(id, password, title, content, link_url, category, file_url, file_name, file_size){
   const res = await sbFetch('/rest/v1/rpc/board_update_post', {
     method:'POST',
@@ -352,6 +404,8 @@ function formatSize(bytes){
 }
 
 let posts = [];
+let comments = [];
+const openQA = new Set();
 let isAdmin = false;
 let currentFilter = 'all';
 const adminPwKey = 'board_admin_pw';
@@ -438,6 +492,7 @@ function renderPosts(){
           <button class="btn btn-ghost btn-small" data-edit="${p.id}">✏️ 수정</button>
           <button class="btn btn-danger" data-delete="${p.id}">🗑 삭제</button>
         </div>` : ''}
+      ${p.category==='teacher' ? renderQA(p) : ''}
     </div>`;
   }).join('');
 
@@ -448,7 +503,83 @@ function renderPosts(){
     list.querySelectorAll('[data-edit]').forEach(btn=>{
       btn.addEventListener('click', ()=> openEditModal(Number(btn.dataset.edit)));
     });
+    list.querySelectorAll('[data-qa-delete]').forEach(btn=>{
+      btn.addEventListener('click', ()=> onQaDelete(Number(btn.dataset.qaDelete)));
+    });
   }
+  list.querySelectorAll('[data-qa-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = Number(btn.dataset.qaToggle);
+      if(openQA.has(id)) openQA.delete(id); else openQA.add(id);
+      renderPosts();
+    });
+  });
+  list.querySelectorAll('[data-qa-submit]').forEach(btn=>{
+    btn.addEventListener('click', ()=> onQaSubmit(Number(btn.dataset.qaSubmit)));
+  });
+  list.querySelectorAll('[data-qa-content]').forEach(inp=>{
+    inp.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); onQaSubmit(Number(inp.dataset.qaContent)); }
+    });
+  });
+}
+
+function renderQA(p){
+  const qaList = comments.filter(c=>c.post_id===p.id);
+  const qaOpen = openQA.has(p.id);
+  const itemsHtml = qaList.length ? qaList.map(c => `
+    <div class="qa-item ${c.is_admin?'admin':''}">
+      <div class="qa-item-meta">
+        <span class="qa-author">${escapeHtml(c.author)}</span>
+        ${c.is_admin ? '<span class="qa-badge">You쌤 답변</span>' : ''}
+        <span class="qa-time">${formatTime(c.created_at)}</span>
+        ${isAdmin ? `<button class="qa-delete" data-qa-delete="${c.id}">삭제</button>` : ''}
+      </div>
+      <div class="qa-text">${escapeHtml(c.content)}</div>
+    </div>`).join('') : '<p class="qa-empty">아직 질문이 없어요. 궁금한 점을 남겨보세요!</p>';
+
+  return `
+    <button class="qa-toggle" data-qa-toggle="${p.id}">💬 질문·답변 ${qaList.length}개 ${qaOpen ? '▲' : '▼'}</button>
+    <div class="qa-panel ${qaOpen ? 'open' : ''}">
+      ${itemsHtml}
+      <div class="qa-form">
+        <input type="text" class="qa-author-input" data-qa-author="${p.id}" placeholder="${isAdmin?'You쌤':'이름'}" maxlength="50" value="${isAdmin?'You쌤':''}" ${isAdmin?'readonly':''}>
+        <input type="text" data-qa-content="${p.id}" placeholder="${isAdmin?'답변을 입력하세요':'궁금한 점을 질문해보세요'}" maxlength="500">
+        <button class="btn btn-primary btn-small" data-qa-submit="${p.id}">${isAdmin?'답변 등록':'질문 등록'}</button>
+      </div>
+    </div>`;
+}
+
+async function onQaSubmit(postId){
+  const authorInput = document.querySelector(`[data-qa-author="${postId}"]`);
+  const contentInput = document.querySelector(`[data-qa-content="${postId}"]`);
+  const author = authorInput.value.trim() || (isAdmin ? 'You쌤' : '학생');
+  const content = contentInput.value.trim();
+  if(!content){ contentInput.focus(); return; }
+  const btn = document.querySelector(`[data-qa-submit="${postId}"]`);
+  if(btn) btn.disabled = true;
+  try{
+    if(isAdmin){
+      await createTeacherComment({ p_password: getAdminPw(), p_post_id: postId, p_content: content });
+    }else{
+      await createQuestion({ post_id: postId, author, content, is_admin: false });
+    }
+    openQA.add(postId);
+    await refresh();
+  }catch(err){
+    alert(err.message);
+  }finally{
+    if(btn) btn.disabled = false;
+  }
+}
+
+async function onQaDelete(id){
+  if(!confirm('이 질문/답변을 삭제할까요? 되돌릴 수 없어요.')) return;
+  try{
+    await deleteCommentRemote(id, getAdminPw());
+    comments = comments.filter(c=>c.id!==id);
+    renderPosts();
+  }catch(err){ alert(err.message); }
 }
 
 async function refresh(){
@@ -456,7 +587,8 @@ async function refresh(){
   document.getElementById('postList').innerHTML='';
   document.getElementById('emptyView').classList.remove('active');
   try{
-    posts = await loadPosts();
+    const [p, c] = await Promise.all([loadPosts(), loadComments()]);
+    posts = p; comments = c;
     renderPosts();
   }catch(err){
     showComposerErr('게시글을 불러오지 못했어요. 새로고침을 눌러 다시 시도해주세요.');
