@@ -6,15 +6,16 @@
 <title>AI 캐릭터 홍보영상 제작소 — 교사용 슬라이드</title>
 <style>
   :root{
-    --navy:#12162A; --navy2:#1B2140; --navy3:#242B52;
-    --indigo:#3B3F91; --violet:#8B6BD4; --pink:#F0577F;
-    --muted:#9AA0C9; --line:#2E3560;
+    --navy:#F8FAFC; --navy2:#FFFFFF; --navy3:#EBF5FF;
+    --indigo:#4338CA; --violet:#1A56DB; --pink:#7C3AED;
+    --muted:#64748B; --line:#E2E8F0; --text:#0F172A;
+    --shadow-sm:0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
   }
   *{box-sizing:border-box;}
   html,body{height:100%;}
   body{
-    margin:0; background:var(--navy); color:#EDEBF7;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,sans-serif;
+    margin:0; background:var(--navy); color:var(--text);
+    font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,sans-serif;
     overflow:hidden;
   }
   .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
@@ -29,8 +30,8 @@
   .slide > .badge, .slide > .qr-box{width:auto; align-self:flex-start; margin-left:max(0px, calc((100% - 1080px)/2));}
   .slide.active{opacity:1; transform:translateX(0); pointer-events:auto;}
   .kicker{font-size:15px; letter-spacing:3px; color:var(--violet); font-weight:800; text-transform:uppercase; margin:0 0 16px;}
-  h1{font-size:50px; font-weight:900; letter-spacing:-1px; margin:0 0 18px; line-height:1.2;}
-  h2{font-size:38px; font-weight:900; letter-spacing:-0.5px; margin:0 0 24px;}
+  h1{font-size:50px; font-weight:900; letter-spacing:-1px; margin:0 0 18px; line-height:1.2; color:var(--text);}
+  h2{font-size:38px; font-weight:900; letter-spacing:-0.5px; margin:0 0 24px; color:var(--text);}
   p.lead{font-size:21px; color:var(--muted); line-height:1.65;}
 
   .grid{display:grid; gap:18px; margin-top:12px;}
@@ -39,71 +40,73 @@
   .grid-4{grid-template-columns:repeat(4,1fr);}
   .card{
     background:var(--navy2); border:1px solid var(--line); border-radius:14px; padding:22px 24px;
+    box-shadow:var(--shadow-sm);
   }
   .card .num{
     display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;
     border-radius:50%; background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;
     font-weight:800; font-size:16px; margin-bottom:12px;
   }
-  .card h3{margin:0 0 8px; font-size:20px; font-weight:800;}
+  .card h3{margin:0 0 8px; font-size:20px; font-weight:800; color:var(--text);}
   .card p{margin:0; font-size:16.5px; color:var(--muted); line-height:1.55;}
 
   .flow{display:flex; align-items:center; gap:10px; margin-top:24px; flex-wrap:wrap;}
   .flow .step{
     background:var(--navy2); border:1px solid var(--line); border-radius:12px; padding:16px 18px;
-    font-size:17px; font-weight:700; flex:1; min-width:140px; text-align:center;
+    font-size:17px; font-weight:700; flex:1; min-width:140px; text-align:center; box-shadow:var(--shadow-sm);
   }
   .flow .arrow{color:var(--muted); font-size:22px;}
 
   .warn{
-    background:#3A1B28; border:1px solid #7A3550; border-left:5px solid var(--pink);
-    border-radius:10px; padding:20px 24px; margin-top:20px; font-size:17px; line-height:1.6;
+    background:#FEF2F2; border:1px solid #FCA5A5; border-left:5px solid #DC2626;
+    border-radius:10px; padding:20px 24px; margin-top:20px; font-size:17px; line-height:1.6; color:#7F1D1D;
   }
-  .warn b{color:#FFB4C8;}
+  .warn b{color:#B91C1C;}
 
   .tip{
-    background:#1A2E24; border-left:5px solid #5CB878; border-radius:10px; padding:18px 22px;
-    margin-top:16px; font-size:17px; color:#BEEBCB; line-height:1.6;
+    background:#ECFDF5; border-left:5px solid #059669; border-radius:10px; padding:18px 22px;
+    margin-top:16px; font-size:17px; color:#065F46; line-height:1.6;
   }
 
   table.tbl{border-collapse:collapse; margin-top:16px; width:100%;}
   table.tbl th, table.tbl td{border:1px solid var(--line); padding:13px 16px; font-size:16.5px; text-align:left;}
-  table.tbl th{background:var(--navy3); color:#fff; font-weight:800;}
+  table.tbl th{background:var(--navy3); color:var(--text); font-weight:800;}
   table.tbl td{color:var(--muted);}
 
   .cover h1{font-size:64px;}
   .badge{
     display:inline-block; margin-top:26px; padding:12px 22px; border-radius:999px;
     background:var(--navy2); border:1px solid var(--line); font-size:16px; color:var(--muted);
+    box-shadow:var(--shadow-sm);
   }
   .qr-box{
-    margin-top:26px; display:inline-block; background:#fff; color:#111; padding:16px 20px;
-    border-radius:12px; font-size:15px; max-width:680px;
+    margin-top:26px; display:inline-block; background:var(--navy2); color:var(--text); padding:16px 20px;
+    border-radius:12px; font-size:15px; max-width:680px; border:1px solid var(--line); box-shadow:var(--shadow-sm);
   }
 
   /* 체크리스트 (기획서/대본/캐릭터 설계 필수 요소) */
   .checklist{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
   .checklist .item{
     background:var(--navy2); border:1px solid var(--line); border-radius:12px;
-    padding:14px 22px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+    padding:14px 22px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; box-shadow:var(--shadow-sm);
   }
-  .checklist .item .chk{color:#8CE0A8; font-size:19px; flex:0 0 auto;}
-  .checklist .item .label{font-weight:800; font-size:19px; color:#fff; min-width:190px;}
+  .checklist .item .chk{color:#059669; font-size:19px; flex:0 0 auto;}
+  .checklist .item .label{font-weight:800; font-size:19px; color:var(--text); min-width:190px;}
   .checklist .item .ex{font-size:16px; color:var(--muted);}
-  .checklist .item .ex b{color:#C9C2F0; font-weight:700;}
+  .checklist .item .ex b{color:var(--indigo); font-weight:700;}
 
   /* 단계별 순서 (HeyGen·Flow 생성 순서) */
   .steplist{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
   .steplist .srow{
     display:flex; align-items:center; gap:16px; background:var(--navy2); border:1px solid var(--line);
-    border-radius:12px; padding:14px 20px;
+    border-radius:12px; padding:14px 20px; box-shadow:var(--shadow-sm);
   }
   .steplist .snum{
     flex:0 0 36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--violet),var(--pink));
     color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px;
   }
-  .steplist .stext{font-size:17.5px; font-weight:600; line-height:1.5; color:#EDEBF7;}
-  .steplist .stext .menu{color:#B9A9E0; font-weight:800;}
+  .steplist .stext{font-size:17.5px; font-weight:600; line-height:1.5; color:var(--text);}
+  .steplist .stext .menu{color:var(--indigo); font-weight:800;}
 
   /* AI 윤리 예시 프롬프트 슬라이드 — 낮은 해상도에서도 한 화면에 */
   .quiz-prompt-grid .card{padding:14px 18px;}
@@ -115,7 +118,7 @@
   .quiz-card{
     background:var(--navy2); border:1px solid var(--line); border-radius:14px;
     padding:16px 22px; cursor:pointer; display:flex; align-items:center; gap:16px;
-    transition:border-color .2s ease, background .2s ease; user-select:none;
+    transition:border-color .2s ease, background .2s ease; user-select:none; box-shadow:var(--shadow-sm);
   }
   .quiz-card:hover{border-color:var(--violet);}
   .quiz-card .qnum{
@@ -125,18 +128,18 @@
     font-weight:800; font-size:17px;
   }
   .quiz-card .qbody{flex:1;}
-  .quiz-card .qtext{font-size:19px; font-weight:800; color:#EDEBF7; line-height:1.4;}
+  .quiz-card .qtext{font-size:19px; font-weight:800; color:var(--text); line-height:1.4;}
   .quiz-card .qanswer{
     display:none; margin-top:8px; font-size:19px; font-weight:900;
-    color:#8CE0A8; animation:popIn .35s ease;
+    color:#059669; animation:popIn .35s ease;
   }
   .quiz-card .qhintlabel{
     flex:0 0 auto; font-size:12.5px; color:var(--muted); border:1px solid var(--line);
     border-radius:999px; padding:6px 14px; transition:all .2s ease;
   }
-  .quiz-card.revealed{background:#182642; border-color:#3B6D52;}
+  .quiz-card.revealed{background:#ECFDF5; border-color:#6EE7B7;}
   .quiz-card.revealed .qanswer{display:block;}
-  .quiz-card.revealed .qhintlabel{color:#8CE0A8; border-color:#3B6D52;}
+  .quiz-card.revealed .qhintlabel{color:#059669; border-color:#6EE7B7;}
   @keyframes popIn{from{opacity:0; transform:translateY(-4px) scale(.96);} to{opacity:1; transform:translateY(0) scale(1);}}
   @media(max-width:700px){
     .quiz-card{padding:12px 14px; gap:10px;}
@@ -155,7 +158,7 @@
     padding:8px 16px; border-radius:999px; font-size:13.5px; font-weight:700; white-space:nowrap;
     font-family:inherit; cursor:pointer;
   }
-  .toptabs .tab:hover{color:#fff;}
+  .toptabs .tab:hover{color:var(--violet);}
   .toptabs .tab.active{background:linear-gradient(135deg,var(--violet),var(--pink)); color:#fff;}
   .tabpanel{display:none;}
   .tabpanel.active{display:block;}
@@ -168,9 +171,9 @@
   .navbar{
     position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
     display:flex; align-items:center; gap:14px; background:var(--navy2); border:1px solid var(--line);
-    border-radius:999px; padding:10px 16px; z-index:10;
+    border-radius:999px; padding:10px 16px; z-index:10; box-shadow:var(--shadow-sm);
   }
-  .navbar button{background:transparent; border:none; color:#fff; cursor:pointer; font-size:18px; padding:4px 8px;}
+  .navbar button{background:transparent; border:none; color:var(--text); cursor:pointer; font-size:18px; padding:4px 8px;}
   .navbar button:hover{color:var(--violet);}
   .dots{display:flex; gap:6px;}
   .dot{width:6px; height:6px; border-radius:50%; background:var(--line); transition:background .2s ease;}
@@ -291,16 +294,16 @@ SLIDES_HTML.push(`
   <div style="text-align:center; max-width:1000px; margin:0 auto;">
     <p class="kicker">강사 소개</p>
     <h2>You쌤 유희진</h2>
-    <p class="lead" style="font-size:24px; margin:0 auto 28px; text-align:center;">💡 상상을 현실로 기획하는 <b style="color:#fff;">AI Convergence Artist</b></p>
+    <p class="lead" style="font-size:24px; margin:0 auto 28px; text-align:center;">💡 상상을 현실로 기획하는 <b style="color:var(--indigo);">AI Convergence Artist</b></p>
     <div class="grid grid-4" style="gap:14px;">
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">KAEA(한국AI전문가교육협회)<br>상임이사</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">미래이음연구소<br>수석연구원</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">경남AI협회<br>프로젝트본부장</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">한국콘텐츠능률협회<br>정회원</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">국제디지털콘텐츠협회<br>지국장</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">드론교육협회<br>민간자격평가위원</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">AICLab(AI콘텐츠융합연구소)<br>책임연구원</p></div>
-      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:#EDEBF7;line-height:1.4;">AI Convergence<br>Artist</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">KAEA(한국AI전문가교육협회)<br>상임이사</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">미래이음연구소<br>수석연구원</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">경남AI협회<br>프로젝트본부장</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">한국콘텐츠능률협회<br>정회원</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">국제디지털콘텐츠협회<br>지국장</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">드론교육협회<br>민간자격평가위원</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">AICLab(AI콘텐츠융합연구소)<br>책임연구원</p></div>
+      <div class="card" style="padding:20px 14px; display:flex; align-items:center; justify-content:center; min-height:104px;"><p style="margin:0;font-size:18.5px;font-weight:700;color:var(--text);line-height:1.4;">AI Convergence<br>Artist</p></div>
     </div>
   </div>
 `);
@@ -314,7 +317,7 @@ SLIDES_HTML.push(`
     <div class="card"><div class="num">3</div><h3>© 저작권 준수와 출처 표기</h3><p>타인의 지적 재산권을 존중하고 정확한 출처를 명시합니다.</p></div>
     <div class="card"><div class="num">4</div><h3>🧠 비판적 사고와 과의존 방지</h3><p>AI 결과에 맹목적으로 의존하지 않고 비판적으로 사고합니다.</p></div>
     <div class="card"><div class="num">5</div><h3>💬 바르고 고운 언어 사용</h3><p>상대방을 존중하는 올바르고 긍정적인 언어를 사용합니다.</p></div>
-    <div class="card" style="border-color:#7A3550; background:#2A1622;"><h3>⚠ 경고</h3><p style="color:#F5B8C9;">올바른 윤리 의식 없이 설계된 AI는 시스템의 오류를 발생시킵니다.</p></div>
+    <div class="card" style="border-color:#FCA5A5; background:#FEF2F2;"><h3>⚠ 경고</h3><p style="color:#B91C1C;">올바른 윤리 의식 없이 설계된 AI는 시스템의 오류를 발생시킵니다.</p></div>
   </div>
 `);
 
@@ -335,36 +338,36 @@ SLIDES_HTML.push(`
   <p class="kicker">수업 전 AI 윤리교육 ③ · 이렇게 바꿔 쓰세요</p>
   <h2 style="margin-bottom:14px;">안전 수칙을 지키는 예시 프롬프트</h2>
   <div class="grid grid-2 quiz-prompt-grid" style="margin-top:4px; gap:12px;">
-    <div class="card" style="border-color:#5D3B48;">
-      <h3 style="color:#FFB4C8;">🚫 개인정보 노출</h3>
+    <div class="card" style="border-color:#FCA5A5; background:#FEF2F2;">
+      <h3 style="color:#B91C1C;">🚫 개인정보 노출</h3>
       <p class="mono" style="font-size:14.5px;">"내 이름은 김철수고 창원시 ○○동에 살아. 우리 학교 이름을 넣은 호텔 캐릭터를 만들어줘."</p>
     </div>
-    <div class="card" style="border-color:#3B5D48;">
-      <h3 style="color:#8CE0A8;">✅ 가명으로 안전하게</h3>
+    <div class="card" style="border-color:#6EE7B7; background:#ECFDF5;">
+      <h3 style="color:#047857;">✅ 가명으로 안전하게</h3>
       <p class="mono" style="font-size:14.5px;">"나는 학생A야. 바다 전망 힐링 호텔의 체크인 안내 직원 캐릭터를 만들어줘."</p>
     </div>
-    <div class="card" style="border-color:#5D3B48;">
-      <h3 style="color:#FFB4C8;">🚫 유명 캐릭터 도용</h3>
+    <div class="card" style="border-color:#FCA5A5; background:#FEF2F2;">
+      <h3 style="color:#B91C1C;">🚫 유명 캐릭터 도용</h3>
       <p class="mono" style="font-size:14.5px;">"피카츄랑 똑같이 생긴 호텔 마스코트를 그려줘."</p>
     </div>
-    <div class="card" style="border-color:#3B5D48;">
-      <h3 style="color:#8CE0A8;">✅ 일반 단어로 풀어서</h3>
+    <div class="card" style="border-color:#6EE7B7; background:#ECFDF5;">
+      <h3 style="color:#047857;">✅ 일반 단어로 풀어서</h3>
       <p class="mono" style="font-size:14.5px;">"노란색 털에 전기 스파크 포인트가 있는, 세상에 없던 귀여운 가상 마스코트를 그려줘."</p>
     </div>
-    <div class="card" style="border-color:#5D3B48;">
-      <h3 style="color:#FFB4C8;">🚫 실제 인물 사진 업로드</h3>
+    <div class="card" style="border-color:#FCA5A5; background:#FEF2F2;">
+      <h3 style="color:#B91C1C;">🚫 실제 인물 사진 업로드</h3>
       <p class="mono" style="font-size:14.5px;">"(친구·선생님 사진을 올리며) 이 사람으로 말하는 아바타를 만들어줘."</p>
     </div>
-    <div class="card" style="border-color:#3B5D48;">
-      <h3 style="color:#8CE0A8;">✅ 가상 캐릭터만 사용</h3>
+    <div class="card" style="border-color:#6EE7B7; background:#ECFDF5;">
+      <h3 style="color:#047857;">✅ 가상 캐릭터만 사용</h3>
       <p class="mono" style="font-size:14.5px;">"(AI로 만든 캐릭터 이미지를 올리며) 이 가상 캐릭터로 말하는 아바타를 만들어줘."</p>
     </div>
-    <div class="card" style="border-color:#5D3B48;">
-      <h3 style="color:#FFB4C8;">🚫 그대로 복붙 제출</h3>
+    <div class="card" style="border-color:#FCA5A5; background:#FEF2F2;">
+      <h3 style="color:#B91C1C;">🚫 그대로 복붙 제출</h3>
       <p class="mono" style="font-size:14.5px;">AI가 써준 대본을 한 글자도 안 고치고 그대로 제출하기.</p>
     </div>
-    <div class="card" style="border-color:#3B5D48;">
-      <h3 style="color:#8CE0A8;">✅ 검증하고 내 언어로</h3>
+    <div class="card" style="border-color:#6EE7B7; background:#ECFDF5;">
+      <h3 style="color:#047857;">✅ 검증하고 내 언어로</h3>
       <p class="mono" style="font-size:14.5px;">"이 대본에서 사실과 다른 부분이 없는지 알려줘. 그리고 내 말투로 자연스럽게 다듬을 부분을 제안해줘."</p>
     </div>
   </div>
@@ -375,25 +378,25 @@ SLIDES_HTML.push(`
   <h2>AI 캐릭터 홍보영상 제작소</h2>
   <p class="lead">학생들은 이 링크에서 인터뷰에 답하고 기획안부터 캐릭터 생성 프롬프트까지 자동으로 완성합니다.</p>
   <a href="https://yousam4u.github.io/hotel-character-video/" target="_blank" class="card" style="display:block; margin-top:22px; max-width:560px; text-align:center; padding:28px; text-decoration:none; border:1.5px solid var(--violet);">
-    <div style="font-size:22px; font-weight:900; color:#fff; margin-bottom:6px;">🎬 AI 캐릭터 홍보영상 제작소 열기</div>
-    <div class="mono" style="font-size:13px; color:#9AA0C9;">yousam4u.github.io/hotel-character-video</div>
+    <div style="font-size:22px; font-weight:900; color:var(--text); margin-bottom:6px;">🎬 AI 캐릭터 홍보영상 제작소 열기</div>
+    <div class="mono" style="font-size:13px; color:var(--muted);">yousam4u.github.io/hotel-character-video</div>
   </a>
-  <p class="lead" style="margin-top:18px; font-size:14px;">✍️ 직접 복사해 쓰는 상세 프롬프트 가이드: <a href="https://yousam4u.github.io/hotel-character-video/prompt.html" target="_blank" style="color:#B9A9E0;">yousam4u.github.io/hotel-character-video/prompt.html</a></p>
+  <p class="lead" style="margin-top:18px; font-size:14px;">✍️ 직접 복사해 쓰는 상세 프롬프트 가이드: <a href="https://yousam4u.github.io/hotel-character-video/prompt.html" target="_blank" style="color:var(--indigo);">yousam4u.github.io/hotel-character-video/prompt.html</a></p>
 `);
 
 SLIDES_HTML.push(`
   <p class="kicker">Overview</p>
   <h2>전체 워크플로우</h2>
   <div class="flow">
-    <div class="step">① 기획안<br><span class="mono" style="color:#9AA0C9;font-size:11px;">인터뷰 6문항</span></div>
+    <div class="step">① 기획안<br><span class="mono" style="color:var(--muted);font-size:11px;">인터뷰 6문항</span></div>
     <div class="arrow">→</div>
-    <div class="step">② 대본 생성<br><span class="mono" style="color:#9AA0C9;font-size:11px;">Claude·Gemini</span></div>
+    <div class="step">② 대본 생성<br><span class="mono" style="color:var(--muted);font-size:11px;">Claude·Gemini</span></div>
     <div class="arrow">→</div>
-    <div class="step">③ 캐릭터 이미지<br><span class="mono" style="color:#9AA0C9;font-size:11px;">Canva·Gemini</span></div>
+    <div class="step">③ 캐릭터 이미지<br><span class="mono" style="color:var(--muted);font-size:11px;">Canva·Gemini</span></div>
     <div class="arrow">→</div>
-    <div class="step">④ 단독 영상<br><span class="mono" style="color:#9AA0C9;font-size:11px;">HeyGen</span></div>
+    <div class="step">④ 단독 영상<br><span class="mono" style="color:var(--muted);font-size:11px;">HeyGen</span></div>
     <div class="arrow">→</div>
-    <div class="step">⑤ 대화 영상<br><span class="mono" style="color:#9AA0C9;font-size:11px;">Google Flow</span></div>
+    <div class="step">⑤ 대화 영상<br><span class="mono" style="color:var(--muted);font-size:11px;">Google Flow</span></div>
   </div>
   <p class="lead" style="margin-top:22px;">학생용 웹페이지가 ①~③ 과정을 인터뷰 형식으로 자동화해줍니다. 학생은 질문 6개에 답하기만 하면 됩니다.</p>
 `);
@@ -525,8 +528,8 @@ SLIDES_HTML.push(`
   <p class="kicker">안전 · 윤리</p>
   <h2>캐릭터 소재 안전 수칙</h2>
   <div class="grid grid-2">
-    <div class="card" style="border-color:#3B5D48;"><h3>👍 권장 소재</h3><p>성인 호텔리어 · 관광 가이드 · 승무원 · 리셉션 직원 등 직업인 캐릭터</p></div>
-    <div class="card" style="border-color:#5D3B48;"><h3>🚫 피해야 할 소재</h3><p>교복·미성년자로 보이는 인물, 시험·괴롭힘, 병원·범죄·재난 소재</p></div>
+    <div class="card" style="border-color:#6EE7B7; background:#ECFDF5;"><h3>👍 권장 소재</h3><p>성인 호텔리어 · 관광 가이드 · 승무원 · 리셉션 직원 등 직업인 캐릭터</p></div>
+    <div class="card" style="border-color:#FCA5A5; background:#FEF2F2;"><h3>🚫 피해야 할 소재</h3><p>교복·미성년자로 보이는 인물, 시험·괴롭힘, 병원·범죄·재난 소재</p></div>
   </div>
   <p class="lead" style="margin-top:20px;">실제 인물(연예인·타인) 사진이나 음성은 어떤 도구에도 업로드하지 않고, 반드시 AI로 새로 만든 가상 캐릭터만 사용하도록 매 차시 도입부에서 환기해주세요.</p>
 `);
